@@ -1,10 +1,10 @@
 #!/bin/sh
 
-CUREENT_PASSWD="wanggang"
+CUREENT_PASSWD="qweasdzxc"
 # 清空数据库表里面的数据
 USER="root"
 PASSWORD=""
-mysql -u$USER -p$PASSWORD -h127.0.0.1 -P28096 << EOF 2>/dev/null
+mysql -u$USER -p$PASSWORD -h127.0.0.1 -P28096 << EOF
     use vpn;
     #DELETE FROM accesslist_20150402;
     show tables;

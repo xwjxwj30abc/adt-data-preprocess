@@ -72,21 +72,15 @@ public class ThreadCore {
 
 	public void close() {
 		pool.shutdown();
-		try {
-			boolean loop = true;
-			do { //等待所有任务完成
-				loop = !pool.awaitTermination(10, TimeUnit.SECONDS); //阻塞，直到线程池里所有任务结束
-			} while (loop);
-		} catch (InterruptedException e) {
-			logger.error(e.getMessage());
-			e.printStackTrace();
-		}
-		//		try {
-		//			pool.awaitTermination(20, TimeUnit.SECONDS);
-		//		} catch (InterruptedException e) {
-		//			logger.error(e.getMessage());
-		//			throw new RuntimeException();
-		//		}
+		do {
+			//等待所有任务完成
+			//loop = !pool.awaitTermination(10, TimeUnit.SECONDS); //阻塞，直到线程池里所有任务结束
+			try {
+				TimeUnit.SECONDS.sleep(10);
+				logger.info("线程池任务并没有完全结束，等待10s.");
+			} catch (InterruptedException e) {
+				e.printStackTrace();
+			}
+		} while (!pool.isTerminated());
 	}
-
 }

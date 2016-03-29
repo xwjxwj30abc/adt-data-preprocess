@@ -1,5 +1,5 @@
 # !/bin/bash
 
-CURRENT_PASSWD="wanggang"
-echo $CURRENT_PASSWD | sudo -S ./conf/vpndisk_run.sh
+CURRENT_PASSWD="qweasdzxc"
+echo $CURRENT_PASSWD | sudo -S /home/fgq/develop/eclipse/work/adt-data-preprocess/src/main/resources/vpndisk_run.sh
 

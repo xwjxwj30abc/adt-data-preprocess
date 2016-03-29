@@ -23,16 +23,13 @@ public interface DataMapper {
 			+ "Service_type,Keyword1,Keyword2,Keyword3,Matching_word,"
 			+ "Set_time,Validation_time,Manual_pause_time,Filter_method,Filter_argument FROM ${tablename}"
 			+ " WHERE id >= #{from} AND id<(#{from}+1000)")
-	public List<PlcNetInfo> getPlcNetInfoData(@Param("tablename") String tablename,
-			@Param("from") int from);
+	public List<PlcNetInfo> getPlcNetInfoData(@Param("tablename") String tablename, @Param("from") int from);
 
 	@Select("SELECT id,Service_code,Rule_id,Destination_ip,Net_ending_ip,Net_ending_mac,"
 			+ "Destination_ipv6,Net_ending_ipv6,Matching_time,Service_type,Keyword1,"
-			+ "Keyword2,Keyword3,User_name,Certificate_type,"
-			+ "Certificate_code,Org_name,Country FROM ${tablename}"
+			+ "Keyword2,Keyword3,User_name,Certificate_type," + "Certificate_code,Org_name,Country FROM ${tablename}"
 			+ " WHERE id >= #{from} AND id<(#{from}+1000)")
-	public List<AlertList> getAlertListData(@Param("tablename") String tablename,
-			@Param("from") int from);
+	public List<AlertList> getAlertListData(@Param("tablename") String tablename, @Param("from") int from);
 
 	@Select("SELECT Service_code,Service_name, Address,Zip, Principal,"
 			+ "Principal_tel,Infor_man,Infor_man_tel,Infor_man_email,Producer_code,Status,Ending_number,"
@@ -42,16 +39,14 @@ public interface DataMapper {
 			+ "Device_ipv4,Device_ipv6,Device_port,Udp_online,Device_serial,"
 			+ "Device_version,Device_flow1,Device_flow2,Device_note,User_name,Certificate_type,"
 			+ "Certificate_code,Org_name,Country FROM ${tablename}  WHERE Service_code=#{Service_code}")
-	public PlcClient getPlcClientData(@Param("tablename") String tablename,
-			@Param("Service_code") long Service_code);
+	public PlcClient getPlcClientData(@Param("tablename") String tablename, @Param("Service_code") long Service_code);
 
 	@Select("SELECT id,Service_code,Net_ending_ip,Net_ending_name,Time,Net_ending_mac,Destination_ip,"
 			+ "Port,Service_type,Keyword1,Keyword2,Keyword3,Mac,Source_port,Net_ending_ipv6,Destination_ipv6,"
 			+ "Keyword11,Keyword12,Keyword13,Keyword14,Keyword15,Keyword21,Keyword22,Keyword23,"
 			+ "Keyword24,Keyword25,vpn1_ip,vpn2_ip,vpn3_ip FROM ${tablename}"
 			+ " WHERE id >= #{from} AND id<(#{from}+1000)")
-	public List<AccessList> getAccessListData(@Param("tablename") String tablename,
-			@Param("from") int from);
+	public List<AccessList> getAccessListData(@Param("tablename") String tablename, @Param("from") int from);
 
 	@Select("SELECT COUNTRY,JD,WD FROM ${tablename} WHERE COUNTRY LIKE #{country}")
 	public IP2GEO getGEO(@Param("tablename") String tablename, @Param("country") String country);

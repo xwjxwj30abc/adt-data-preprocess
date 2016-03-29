@@ -53,8 +53,7 @@ public class GetPlcNetInfoListThread implements Runnable {
 			hbaseTable.close();
 			logger.info("succeed insert" + plcnetinfos.size());
 			Constant.CURRENT_NUM.addAndGet(plcnetinfos.size());
-			logger.info("当前插入数据量" + plcnetinfos.size() + ";共插入数据量：" + Constant.CURRENT_NUM
-					+ ";数据总量：" + Constant.SUM_OF_DATA);
+			logger.info("插入数据量：" + Constant.CURRENT_NUM + ";数据总量：" + Constant.SUM_OF_DATA);
 		} catch (IOException e1) {
 			e1.printStackTrace();
 		}

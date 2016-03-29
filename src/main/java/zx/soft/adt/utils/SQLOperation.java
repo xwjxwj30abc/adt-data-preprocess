@@ -15,7 +15,6 @@ import zx.soft.adt.domain.AlertList;
 import zx.soft.adt.domain.IP2GEO;
 import zx.soft.adt.domain.PlcClient;
 import zx.soft.adt.domain.PlcNetInfo;
-import zx.soft.adt.utils.MybatisConfig.DataSourceEnvironment;
 
 /**
  * 数据库操作类,实现DataMapper接口
@@ -26,13 +25,12 @@ import zx.soft.adt.utils.MybatisConfig.DataSourceEnvironment;
 public class SQLOperation implements DataMapper {
 
 	private static Logger logger = LoggerFactory.getLogger(SQLOperation.class);
-	private static SqlSessionFactory sqlSessionFactory_development;
-	private static SqlSessionFactory sqlSessionFactory_adt;
+	private SqlSessionFactory sqlSessionFactory_development;
+	private SqlSessionFactory sqlSessionFactory_adt;
 
 	public SQLOperation() {
-		sqlSessionFactory_adt = MybatisConfig.getSqlSessionFactory(DataSourceEnvironment.adt);
-		sqlSessionFactory_development = MybatisConfig
-				.getSqlSessionFactory(DataSourceEnvironment.development);
+		sqlSessionFactory_adt = MybatisConfig.getAdtSqlSessionFactory();
+		sqlSessionFactory_development = new MybatisConfig().getDevelopmentSqlSessionFactory();
 	}
 
 	@Override

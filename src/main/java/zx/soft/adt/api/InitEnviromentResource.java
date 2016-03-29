@@ -20,10 +20,11 @@ public class InitEnviromentResource extends ServerResource {
 	}
 
 	@Get("json")
-	public Object initMysql() {
+	public String initMysql() {
 		Constant.CURRENT_NUM = new AtomicLong(0L);
 		Constant.SUM_OF_DATA = 0;
-		return application.excuteShell(props.getProperty("init.mysql.shell.path"));
+		int success = application.excuteShell(props.getProperty("init.mysql.shell.path"));
+		return String.valueOf(success);
 	}
 
 }

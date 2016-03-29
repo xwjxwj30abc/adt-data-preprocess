@@ -43,9 +43,8 @@ public class GetAlertListThread implements Runnable {
 			for (AlertList alertlist : alertlists) {
 				//获取Service_code,对于无意义的Service_code不加以存储
 				if (alertlist.getService_code() != 0) {
-					String keyWord = CheckSumUtils
-							.getMD5(String.valueOf(System.currentTimeMillis()) + mysqlTablename
-									+ String.valueOf(alertlist.getId()));
+					String keyWord = CheckSumUtils.getMD5(String.valueOf(System.currentTimeMillis()) + mysqlTablename
+							+ String.valueOf(alertlist.getId()));
 					try {
 						if (alertlist.getDestination_ip() != 0) {
 							geo = IPToGEO.get(alertlist.getDestination_ip(), sqlOperation);
@@ -63,22 +62,19 @@ public class GetAlertListThread implements Runnable {
 					hbaseTable.put(keyWord, Constant.adt_cf, "de4", alertlist.getDestination_ip());
 					hbaseTable.put(keyWord, Constant.adt_cf, "nep", alertlist.getNet_ending_ip());
 					hbaseTable.put(keyWord, Constant.adt_cf, "nem", alertlist.getNet_ending_mac());
-					hbaseTable
-							.put(keyWord, Constant.adt_cf, "de6", alertlist.getDestination_ipv6());
+					hbaseTable.put(keyWord, Constant.adt_cf, "de6", alertlist.getDestination_ipv6());
 					hbaseTable.put(keyWord, Constant.adt_cf, "ne6", alertlist.getNet_ending_ipv6());
 					hbaseTable.put(keyWord, Constant.adt_cf, "ma", alertlist.getMatching_time());
 					hbaseTable.put(keyWord, Constant.adt_cf, "set", alertlist.getService_type());
 					hbaseTable.put(keyWord, Constant.adt_cf, "k1", alertlist.getKeyword1());
 					hbaseTable.put(keyWord, Constant.adt_cf, "k2", alertlist.getKeyword2());
 					hbaseTable.put(keyWord, Constant.adt_cf, "k3", alertlist.getKeyword3());
-					PlcClient plcClient = sqlOperation.getPlcClientData(
-							Constant.adt_plcclient_table_name, Service_code);
+					PlcClient plcClient = sqlOperation
+							.getPlcClientData(Constant.adt_plcclient_table_name, Service_code);
 					if (plcClient != null) {
 						hbaseTable.put(keyWord, Constant.adt_cf, "ys", plcClient.getUser_name());
-						hbaseTable.put(keyWord, Constant.adt_cf, "cet",
-								plcClient.getCertificate_type());
-						hbaseTable.put(keyWord, Constant.adt_cf, "cec",
-								plcClient.getCertificate_code());
+						hbaseTable.put(keyWord, Constant.adt_cf, "cet", plcClient.getCertificate_type());
+						hbaseTable.put(keyWord, Constant.adt_cf, "cec", plcClient.getCertificate_code());
 						hbaseTable.put(keyWord, Constant.adt_cf, "or", plcClient.getOrg_name());
 						hbaseTable.put(keyWord, Constant.adt_cf, "co", plcClient.getCountry());
 					} else {
@@ -95,8 +91,7 @@ public class GetAlertListThread implements Runnable {
 			}
 			logger.info("succeed insert" + alertlists.size());
 			Constant.CURRENT_NUM.addAndGet(alertlists.size());
-			logger.info("当前插入数据量" + alertlists.size() + ";共插入数据量：" + Constant.CURRENT_NUM
-					+ ";数据总量：" + Constant.SUM_OF_DATA);
+			logger.info("插入数据量：" + Constant.CURRENT_NUM + ";数据总量：" + Constant.SUM_OF_DATA);
 		} catch (IOException e1) {
 			e1.printStackTrace();
 		}

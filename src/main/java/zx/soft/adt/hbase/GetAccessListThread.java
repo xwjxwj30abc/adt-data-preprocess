@@ -37,8 +37,8 @@ public class GetAccessListThread implements Runnable {
 			HBaseTable hbaseTable = new HBaseTable(conn, Constant.adt_accesslist_table_name);
 			IP2GEO geo = null;
 			for (AccessList accesslist : accesslists) {
-				String keyWord = CheckSumUtils.getMD5(String.valueOf(System.currentTimeMillis())
-						+ mysqlTablename + String.valueOf(accesslist.getId()));
+				String keyWord = CheckSumUtils.getMD5(String.valueOf(System.currentTimeMillis()) + mysqlTablename
+						+ String.valueOf(accesslist.getId()));
 				try {
 					if (accesslist.getDestination_ip() != 0) {
 						geo = IPToGEO.get(accesslist.getDestination_ip(), sqlOperation);
@@ -104,8 +104,7 @@ public class GetAccessListThread implements Runnable {
 			hbaseTable.execute();
 			hbaseTable.close();
 			Constant.CURRENT_NUM.addAndGet(accesslists.size());
-			logger.info("当前插入数据量" + accesslists.size() + ";共插入数据量：" + Constant.CURRENT_NUM
-					+ ";数据总量：" + Constant.SUM_OF_DATA);
+			logger.info("共插入数据量：" + Constant.CURRENT_NUM + ";数据总量：" + Constant.SUM_OF_DATA);
 		} catch (IOException e1) {
 			e1.printStackTrace();
 		}

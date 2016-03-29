@@ -8,29 +8,28 @@ import java.io.InputStreamReader;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public class ExcuteShellThread extends Thread {
+public class ExcuteShell {
 
-	private static Logger logger = LoggerFactory.getLogger(ExcuteShellThread.class);
+	private static Logger logger = LoggerFactory.getLogger(ExcuteShell.class);
 
 	private String name;
+	private int success = 1;
 
-	public ExcuteShellThread(String name) {
+	public ExcuteShell(String name) {
 		this.name = name;
 	}
 
-	@Override
-	public void run() {
+	public int run() {
 		try {
 			Process p = Runtime.getRuntime().exec(name);
 			try {
-				p.waitFor();
+				success = p.waitFor();
 				logger.info("finished.");
 			} catch (InterruptedException e1) {
 				e1.printStackTrace();
 			}
 			InputStream fis = p.getInputStream();
-			final BufferedReader brError = new BufferedReader(new InputStreamReader(
-					p.getErrorStream(), "UTF-8"));
+			final BufferedReader brError = new BufferedReader(new InputStreamReader(p.getErrorStream(), "UTF-8"));
 			InputStreamReader isr = new InputStreamReader(fis, "UTF-8");
 			final BufferedReader br = new BufferedReader(isr);
 			Thread t1 = new Thread() {
@@ -77,15 +76,15 @@ public class ExcuteShellThread extends Thread {
 			t2.start();
 		} catch (IOException e1) {
 			e1.printStackTrace();
-		} finally {
 		}
-
+		return success;
 	}
 
 	public static void main(String[] args) {
 		//修改adt.sh可执行
-		ExcuteShellThread thread = new ExcuteShellThread("src/main/resources/adt.sh");
-		thread.start();
+		ExcuteShell thread = new ExcuteShell("src/main/resources/adt.sh");
+		System.out.println(thread.run());
+		//new Thread(thread).start();
 	}
 
 }

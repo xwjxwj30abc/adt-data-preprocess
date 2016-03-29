@@ -9,7 +9,7 @@ import org.apache.hadoop.hbase.ZooKeeperConnectionException;
 import org.apache.hadoop.hbase.client.HConnection;
 
 import zx.soft.adt.utils.Constant;
-import zx.soft.adt.utils.ExcuteShellThread;
+import zx.soft.adt.utils.ExcuteShell;
 import zx.soft.adt.utils.IP;
 import zx.soft.adt.utils.SQLOperation;
 import zx.soft.hbase.api.core.HBaseClient;
@@ -27,14 +27,12 @@ import com.google.protobuf.ServiceException;
 public class WriteToHBase {
 
 	static {
-		//IP.load("src/main/resources/17monipdb.dat");
 		Properties p = ConfigUtil.getProps("ipdb.properties");
 		String ipDatabase = p.getProperty("dir");
 		IP.load(ipDatabase);
 	}
 
-	public void write() throws MasterNotRunningException, ZooKeeperConnectionException,
-			IOException, ServiceException {
+	public void write() throws MasterNotRunningException, ZooKeeperConnectionException, IOException, ServiceException {
 		HBaseClient client = new HBaseClient();
 		if (client.isTableExists(Constant.adt_alertList_table_name)) {
 			client.deleteTable(Constant.adt_alertList_table_name);
@@ -56,8 +54,7 @@ public class WriteToHBase {
 		HConnection conn = HConn.getHConnection();
 		SQLOperation sqlOperation = new SQLOperation();
 		ThreadCore threadCore = new ThreadCore();
-		List<String> access_tablenames = sqlOperation
-				.getAllTableNames(Constant.adt_mysql_database_name);
+		List<String> access_tablenames = sqlOperation.getAllTableNames(Constant.adt_mysql_database_name);
 		//统计所有待导入的数据总量
 		int sum = 0;
 		for (String tablename : access_tablenames) {
@@ -104,17 +101,12 @@ public class WriteToHBase {
 		threadCore.close();
 	}
 
-	public static void main(String[] args) throws MasterNotRunningException,
-			ZooKeeperConnectionException, IOException, ServiceException {
+	public static void main(String[] args) throws MasterNotRunningException, ZooKeeperConnectionException, IOException,
+			ServiceException {
 		WriteToHBase w = new WriteToHBase();
 		w.write();
-		ExcuteShellThread th = new ExcuteShellThread("src/main/resources/clean.sh");
-		th.start();
-		try {
-			th.join();
-		} catch (InterruptedException e) {
-			e.printStackTrace();
-		}
+		ExcuteShell th = new ExcuteShell("src/main/resources/clean.sh");
+		//new Thread(th).start();
 		System.out.println("end");
 	}
 

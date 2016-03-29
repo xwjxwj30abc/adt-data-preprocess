@@ -5,7 +5,7 @@ import org.restlet.Restlet;
 import org.restlet.routing.Router;
 
 import zx.soft.adt.utils.Constant;
-import zx.soft.adt.utils.ExcuteShellThread;
+import zx.soft.adt.utils.ExcuteShell;
 
 public class ProgressApplication extends Application {
 
@@ -27,18 +27,10 @@ public class ProgressApplication extends Application {
 		return String.valueOf(Constant.CURRENT_NUM);
 	}
 
-	public String excuteShell(String shellPath) {
-		ExcuteShellThread thread = new ExcuteShellThread(shellPath);
-		thread.start();
-		try {
-			thread.join();
-			return "shell执行成功";
-		} catch (InterruptedException e) {
-			e.printStackTrace();
-			return "shell执行失败";
-		} finally {
-			//			thread.interrupt();
-		}
+	public int excuteShell(String shellPath) {
+		ExcuteShell thread = new ExcuteShell(shellPath);
+		int succss = thread.run();
+		return succss;
 	}
 
 }

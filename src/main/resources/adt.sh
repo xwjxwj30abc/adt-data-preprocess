@@ -1,8 +1,8 @@
 #!/bin/sh
 
 #测试java调用shell
-#cd `dirname $0`
-#echo `pwd`
+cd `dirname $0`
+echo `pwd`
 
 #测试登录远程机器进行impala-shell操作
 #ssh -T root@kafka05 << eof
@@ -17,21 +17,21 @@
 
 
 #清空数据库表里面的数据
-USER="root"
-PASSWORD=""
-mysql -u$USER -p$PASSWORD -h127.0.0.1 -P28096<< EOF
-use vpn;
+#USER="root"
+#PASSWORD=""
+#mysql -u$USER -p$PASSWORD -h127.0.0.1 -P28096<< EOF
+#use vpn;
 #DELETE FROM accesslist_20150402;
-show tables;
-EOF
+#show tables;
+#EOF
 
-sudo kill `cat mysqld.pid` > /dev/null
+#sudo kill `cat mysqld.pid` > /dev/null
 
-if [ $? -eq 0 ];then
-    echo "kill mysqld success,next umount disk "
-    umount /dev/sdb1 
-else 
-    echo "kill mysqld failed"
-fi
+#if [ $? -eq 0 ];then
+ #   echo "kill mysqld success,next umount disk "
+  #  umount /dev/sdb1 
+#else 
+ #   echo "kill mysqld failed"
+#fi
 
 exit 0
