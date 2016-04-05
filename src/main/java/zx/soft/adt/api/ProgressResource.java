@@ -1,5 +1,8 @@
 package zx.soft.adt.api;
 
+/**
+ * 显示导入数据进度资源
+ */
 import org.restlet.resource.Get;
 import org.restlet.resource.ServerResource;
 

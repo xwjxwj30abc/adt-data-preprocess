@@ -21,10 +21,11 @@ public class ExcuteShell {
 
 	public int run() {
 		try {
+			logger.info(System.currentTimeMillis() + "start.");
 			Process p = Runtime.getRuntime().exec(name);
 			try {
 				success = p.waitFor();
-				logger.info("finished.");
+				logger.info(System.currentTimeMillis() + "finished.");
 			} catch (InterruptedException e1) {
 				e1.printStackTrace();
 			}

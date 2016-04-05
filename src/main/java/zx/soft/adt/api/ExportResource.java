@@ -12,6 +12,11 @@ import zx.soft.adt.utils.Constant;
 import zx.soft.adt.utils.ExcuteShell;
 import zx.soft.utils.config.ConfigUtil;
 
+/**
+ * 导入数据资源
+ * @author fgq
+ *
+ */
 public class ExportResource extends ServerResource {
 
 	private ProgressApplication application;

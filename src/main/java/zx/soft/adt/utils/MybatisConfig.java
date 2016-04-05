@@ -26,31 +26,6 @@ public class MybatisConfig {
 		development, adt;
 	}
 
-	//private static final Map<DataSourceEnvironment, SqlSessionFactory> SQLSESSIONFACTORYS = new HashMap<>();
-
-	/**
-	 * 根据指定的DataSourceEnvironment获取对应的SqlSessionFactory
-	 * @param environment 数据源environment
-	 * @return SqlSessionFactory
-	 */
-	//	public static SqlSessionFactory getSqlSessionFactory(DataSourceEnvironment environment) {
-	//		SqlSessionFactory sqlSessionFactory = SQLSESSIONFACTORYS.get(environment);
-	//		if (sqlSessionFactory != null)
-	//			return sqlSessionFactory;
-	//		else {
-	//			try (InputStream inputStream = Resources.getResourceAsStream(CONFIGURATION_PATH);) {
-	//				sqlSessionFactory = new SqlSessionFactoryBuilder().build(inputStream, environment.name());
-	//				logger.info("Get {} SqlSessionFactory successfully.", environment.name());
-	//			} catch (IOException e) {
-	//				logger.warn("Get {} SqlSessionFactory error.", environment.name());
-	//				logger.error(e.getMessage(), e);
-	//			}
-	//			SQLSESSIONFACTORYS.put(environment, sqlSessionFactory);
-	//
-	//			return sqlSessionFactory;
-	//		}
-	//	}
-
 	public static SqlSessionFactory getAdtSqlSessionFactory() {
 		if (adt != null) {
 			return adt;
@@ -76,7 +51,6 @@ public class MybatisConfig {
 			logger.warn("update {} SqlSessionFactory error.", DataSourceEnvironment.development.name());
 			logger.error(e.getMessage(), e);
 		}
-		//SQLSESSIONFACTORYS.put(DataSourceEnvironment.adt, sqlSessionFactory);
 		return sqlSessionFactory;
 	}
 }

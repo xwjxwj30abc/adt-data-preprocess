@@ -1,5 +1,8 @@
 package zx.soft.adt.api;
 
+/**
+ * 恢复环境，安全移除设备资源
+ */
 import java.util.Properties;
 import java.util.concurrent.atomic.AtomicLong;
 
