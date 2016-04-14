@@ -71,7 +71,7 @@ public class GetAccessListThread implements Runnable {
 					logger.warn(accesslist.getVpn3_ip() + "");
 				}
 				hbaseTable.put(keyWord, Constant.adt_cf, "id", accesslist.getId());
-				hbaseTable.put(keyWord, Constant.adt_cf, "sec", accesslist.getService_code());
+				hbaseTable.put(keyWord, Constant.adt_cf, "sec", Constant.Service_code);
 				hbaseTable.put(keyWord, Constant.adt_cf, "nei", accesslist.getNet_ending_ip());
 				hbaseTable.put(keyWord, Constant.adt_cf, "nen", accesslist.getNet_ending_name());
 				hbaseTable.put(keyWord, Constant.adt_cf, "ti", accesslist.getTime());

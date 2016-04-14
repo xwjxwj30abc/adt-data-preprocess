@@ -59,6 +59,28 @@ public class ThreadCore {
 		}
 	}
 
+	public void getVPNTrafficData(HConnection conn, String tablename, int from) {
+		if (!pool.isShutdown()) {
+			try {
+				pool.execute(new GetVPNTrafficThread(conn, tablename, from));
+			} catch (Exception e) {
+				logger.error("pool executor error");
+				throw new RuntimeException();
+			}
+		}
+	}
+
+	public void getWanIpv4Data(HConnection conn, String tablename, int from) {
+		if (!pool.isShutdown()) {
+			try {
+				pool.execute(new GetWanIpv4Thread(conn, tablename, from));
+			} catch (Exception e) {
+				logger.error("pool executor error");
+				throw new RuntimeException();
+			}
+		}
+	}
+
 	public void getData(HConnection conn, String tablename, int from, Thread thread) {
 		if (!pool.isShutdown()) {
 			try {

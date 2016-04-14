@@ -10,6 +10,8 @@ import zx.soft.adt.domain.AlertList;
 import zx.soft.adt.domain.IP2GEO;
 import zx.soft.adt.domain.PlcClient;
 import zx.soft.adt.domain.PlcNetInfo;
+import zx.soft.adt.domain.VPNTraffic;
+import zx.soft.adt.domain.WanIpv4;
 
 public interface DataMapper {
 
@@ -56,5 +58,21 @@ public interface DataMapper {
 
 	@Select("SELECT TABLE_NAME FROM INFORMATION_SCHEMA.TABLES WHERE TABLE_SCHEMA= #{db}")
 	public List<String> getAllTableNames(@Param("db") String db);
+
+	@Select("SELECT id,ipv4,begin_time,end_time,traffic FROM ${tablename} WHERE id >= #{from} AND id<(#{from}+1000)")
+	public List<VPNTraffic> getVPNTrafficData(@Param("tablename") String tablename, @Param("from") int from);
+
+	@Select("SELECT id,ipv4,add_time FROM ${tablename} WHERE id >= #{from} AND id<(#{from}+1000)")
+	public List<WanIpv4> getWanIpv4Data(@Param("tablename") String tablename, @Param("from") int from);
+
+	@Select("SELECT Service_code FROM ${tablename} LIMIT 1")
+	public long getServiceCode(@Param("tablename") String tablename);
+
+	@Select("INSERT INTO ${tablename}(Service_code,Service_name)VALUES(#{Service_code},#{Service_name})")
+	public void insertServiceCode(@Param("tablename") String tablename, @Param("Service_code") long Service_code,
+			@Param("Service_name") String Service_name);
+
+	@Select("SELECT COUNT(*) FROM ${tablename} WHERE Service_code=#{Service_code}")
+	public int existsServiceCode(@Param("tablename") String tablename, @Param("Service_code") long Service_code);
 
 }

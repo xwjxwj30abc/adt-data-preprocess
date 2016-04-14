@@ -15,6 +15,8 @@ import zx.soft.adt.domain.AlertList;
 import zx.soft.adt.domain.IP2GEO;
 import zx.soft.adt.domain.PlcClient;
 import zx.soft.adt.domain.PlcNetInfo;
+import zx.soft.adt.domain.VPNTraffic;
+import zx.soft.adt.domain.WanIpv4;
 
 /**
  * 数据库操作类,实现DataMapper接口
@@ -123,18 +125,6 @@ public class SQLOperation implements DataMapper {
 		}
 	}
 
-	public static void main(String[] args) {
-		SQLOperation o = new SQLOperation();
-		//		System.out.println(o.getCount(Constant.adt_mysql_countryinfo_name));
-		//System.out.println(o.getMaxId(Constant.adt_mysql_countryinfo_name));
-		//System.out.println(o.getAccessListData("AccessList", 0));
-		//		System.out.println(o.getAlertListData("AlertList", 0));
-		//		System.out.println(o.getAllTableNames(Constant.adt_mysql_database_name));
-		//System.out.println(o.getPlcClientData(Constant.adt_plcclient_table_name, 903));
-		//System.out.println(o.getPlcNetInfoData("plcNetInfo", 0));
-		System.out.println(o.getALLGEO(Constant.adt_mysql_countryinfo_name));
-	}
-
 	@Override
 	public List<PlcNetInfo> getPlcNetInfoData(String tablename, int from) {
 
@@ -144,6 +134,70 @@ public class SQLOperation implements DataMapper {
 			logger.info("get id from " + from + " to " + (from + plcnetinfos.size()));
 			return plcnetinfos;
 		}
+	}
+
+	@Override
+	public List<VPNTraffic> getVPNTrafficData(String tablename, int from) {
+		try (SqlSession sqlSession = sqlSessionFactory_development.openSession();) {
+			DataMapper dataMapper = sqlSession.getMapper(DataMapper.class);
+			List<VPNTraffic> vPNTraffic = dataMapper.getVPNTrafficData(tablename, from);
+			logger.info("get id from " + from + " to " + (from + vPNTraffic.size()));
+			return vPNTraffic;
+		}
+	}
+
+	@Override
+	public long getServiceCode(String tablename) {
+		try (SqlSession sqlSession = sqlSessionFactory_development.openSession();) {
+			DataMapper dataMapper = sqlSession.getMapper(DataMapper.class);
+			long service_code = dataMapper.getServiceCode(tablename);
+			logger.info("get service_code=" + service_code);
+			return service_code;
+		}
+	}
+
+	@Override
+	public List<WanIpv4> getWanIpv4Data(String tablename, int from) {
+		try (SqlSession sqlSession = sqlSessionFactory_development.openSession();) {
+			DataMapper dataMapper = sqlSession.getMapper(DataMapper.class);
+			List<WanIpv4> wanIpv4s = dataMapper.getWanIpv4Data(tablename, from);
+			logger.info("get id from " + from + " to " + (from + wanIpv4s.size()));
+			return wanIpv4s;
+		}
+	}
+
+	@Override
+	public int existsServiceCode(String tablename, long Service_code) {
+		try (SqlSession sqlSession = sqlSessionFactory_adt.openSession();) {
+			DataMapper dataMapper = sqlSession.getMapper(DataMapper.class);
+			int exist = dataMapper.existsServiceCode(tablename, Service_code);
+			if (exist == 0) {
+				logger.info("do not exist the service_code");
+			} else {
+				logger.info("exist the service_code");
+			}
+			return exist;
+		}
+	}
+
+	@Override
+	public void insertServiceCode(String tablename, long Service_code, String Service_name) {
+		try (SqlSession sqlSession = sqlSessionFactory_adt.openSession();) {
+			DataMapper dataMapper = sqlSession.getMapper(DataMapper.class);
+			dataMapper.insertServiceCode(tablename, Service_code, Service_name);
+			logger.info("insert a new service_code to plcClient");
+		}
+	}
+
+	public static void main(String[] args) {
+		SQLOperation o = new SQLOperation();
+		long service_code = o.getServiceCode("plcClient");
+		System.out.println(service_code);
+		if (o.existsServiceCode(Constant.adt_plcclient_table_name, service_code) == 0) {
+			o.insertServiceCode(Constant.adt_plcclient_table_name, service_code,
+					String.valueOf(System.currentTimeMillis()));
+		}
+
 	}
 
 }

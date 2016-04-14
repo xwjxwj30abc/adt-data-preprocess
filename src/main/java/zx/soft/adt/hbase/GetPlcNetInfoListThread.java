@@ -33,8 +33,8 @@ public class GetPlcNetInfoListThread implements Runnable {
 			List<PlcNetInfo> plcnetinfos = sqlOperation.getPlcNetInfoData(mysqlTablename, from);
 			HBaseTable hbaseTable = new HBaseTable(conn, Constant.adt_plcnetinfo_table_name);
 			for (PlcNetInfo plcnetinfo : plcnetinfos) {
-				String rowKey = plcnetinfo.getRule_id();
-				hbaseTable.put(rowKey, Constant.adt_cf, "sc", plcnetinfo.getService_code());
+				String rowKey = plcnetinfo.getRule_id() + Constant.Service_code;
+				hbaseTable.put(rowKey, Constant.adt_cf, "sc", Constant.Service_code);
 				hbaseTable.put(rowKey, Constant.adt_cf, "rn", plcnetinfo.getRule_name());
 				hbaseTable.put(rowKey, Constant.adt_cf, "ml", plcnetinfo.getMatching_level());
 				hbaseTable.put(rowKey, Constant.adt_cf, "ra", plcnetinfo.getRule_action());

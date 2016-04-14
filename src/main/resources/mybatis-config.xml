@@ -8,6 +8,7 @@
 		<typeAlias type="zx.soft.adt.domain.AlertList" alias="AlertList" />
 		<typeAlias type="zx.soft.adt.domain.PlcClient" alias="PlcClient" />
 		<typeAlias type="zx.soft.adt.domain.AccessList" alias="AccessList" />
+		<typeAlias type="zx.soft.adt.domain.VPNTraffic" alias="VPNTraffic" />
 		<typeAlias type="zx.soft.adt.domain.IP2GEO" alias="IP2GEO" />
 	</typeAliases>
 	<environments default="adt">
@@ -15,16 +16,16 @@
 			<transactionManager type="JDBC" />
 			<dataSource type="POOLED">
 				<property name="driver" value="com.mysql.jdbc.Driver" />
-				 <property name="url"
+				<!--  <property name="url"
 					value="jdbc:mysql://127.0.0.1:28096/vpn?useUnicode=true&amp;characterEncoding=utf-8" />
 				<property name="username" value="root" />
-				<property name="password" value="" /> 
-				<!-- <property name="url"
+				<property name="password" value="" />  -->
+				 <property name="url"
 					value="jdbc:mysql://192.168.6.126/vpn?useUnicode=true&amp;characterEncoding=utf-8" />
 				<property name="username" value="root" />
 				<property name="password" value="root" />
 				<property name="poolPingQuery" value="SELECT NOW()" />
-				<property name="poolPingEnabled" value="true" />  -->
+				<property name="poolPingEnabled" value="true" /> 
 
 				<property name="driver.encoding" value="UTF8" />
 			</dataSource>
