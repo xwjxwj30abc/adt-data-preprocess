@@ -1,6 +1,7 @@
 #!/bin/sh
 
-export DEVNAME="/dev/sdd1"
+export SD=`ls /dev | grep 'sd.1' | grep -v "sda1"
+export DEVNAME="/dev/$SD"
 export MNTDIR="/tmp/usbdisk"
 export DSYSUSER=`grep ':x:2:' /etc/passwd | cut -d':' -f 1`
 
