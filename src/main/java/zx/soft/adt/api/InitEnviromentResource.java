@@ -26,8 +26,7 @@ public class InitEnviromentResource extends ServerResource {
 	public String initMysql() {
 		Constant.CURRENT_NUM = new AtomicLong(0L);
 		Constant.SUM_OF_DATA = 0;
-		//int success = application.excuteShell(props.getProperty("init.mysql.shell.path"));
-		int success = application.excuteShell("src/main/resources/adt.sh");
+		int success = application.excuteShell(props.getProperty("init.mysql.shell.path"));
 		return String.valueOf(success);
 	}
 

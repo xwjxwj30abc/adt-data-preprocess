@@ -61,17 +61,4 @@ public class ExportResource extends ServerResource {
 		}
 	}
 
-	public static String getResult() {
-		Properties props = ConfigUtil.getProps("shell.properties");
-		String dataTransferShellPath = "src/main/resources/transfer.sh";
-		props.setProperty("data.transfer.shell.path", dataTransferShellPath);
-		ExecExport thread = new ExecExport(props);
-		thread.run();
-		return "ok";
-	}
-
-	public static void main(String[] args) {
-		System.out.println(ExportResource.getResult());
-	}
-
 }
