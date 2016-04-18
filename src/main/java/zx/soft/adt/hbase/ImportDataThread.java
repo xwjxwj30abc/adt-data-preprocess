@@ -14,6 +14,7 @@ import zx.soft.adt.domain.PlcClient;
 import zx.soft.adt.domain.PlcNetInfo;
 import zx.soft.adt.domain.VPNTraffic;
 import zx.soft.adt.domain.WanIpv4;
+import zx.soft.adt.utils.CalendarUtil;
 import zx.soft.adt.utils.Constant;
 import zx.soft.adt.utils.IP;
 import zx.soft.adt.utils.IPToGEO;
@@ -226,14 +227,38 @@ public class ImportDataThread implements Runnable {
 			List<VPNTraffic> vpnTraffics = this.sqlOperation.getVPNTrafficData(mysqlTablename, from);
 			HBaseTable hbaseTable = new HBaseTable(conn, Constant.adt_traffic_table_name);
 			for (VPNTraffic vpnTraffic : vpnTraffics) {
-				String keyWord = CheckSumUtils.getMD5(String.valueOf(System.currentTimeMillis())
-						+ Constant.Service_code + String.valueOf(vpnTraffic.getBegin_time()));
-				hbaseTable.put(keyWord, Constant.adt_cf, "id", vpnTraffic.getId());
-				hbaseTable.put(keyWord, Constant.adt_cf, "ip", IP.getIP(vpnTraffic.getIpv4()));
-				hbaseTable.put(keyWord, Constant.adt_cf, "bt", vpnTraffic.getBegin_time());
-				hbaseTable.put(keyWord, Constant.adt_cf, "et", vpnTraffic.getEnd_time());
-				hbaseTable.put(keyWord, Constant.adt_cf, "tr", vpnTraffic.getTraffic());
-				hbaseTable.put(keyWord, Constant.adt_cf, "se", Constant.Service_code);
+				long middle = CalendarUtil.belongToOneHour(vpnTraffic.getBegin_time(), vpnTraffic.getEnd_time());
+				if (middle != 0) {
+					String keyWord = CheckSumUtils.getMD5(String.valueOf(System.currentTimeMillis())
+							+ Constant.Service_code + String.valueOf(vpnTraffic.getBegin_time()));
+					hbaseTable.put(keyWord, Constant.adt_cf, "id", vpnTraffic.getId());
+					hbaseTable.put(keyWord, Constant.adt_cf, "ip", IP.getIP(vpnTraffic.getIpv4()));
+					hbaseTable.put(keyWord, Constant.adt_cf, "bt", vpnTraffic.getBegin_time());
+					hbaseTable.put(keyWord, Constant.adt_cf, "et", middle);
+					long traffic_before = (vpnTraffic.getTraffic()
+							/ (vpnTraffic.getEnd_time() - vpnTraffic.getBegin_time()) * (middle - vpnTraffic
+									.getBegin_time()));
+					hbaseTable.put(keyWord, Constant.adt_cf, "tr", traffic_before);
+					hbaseTable.put(keyWord, Constant.adt_cf, "se", Constant.Service_code);
+
+					String keyWord2 = CheckSumUtils.getMD5(String.valueOf(System.currentTimeMillis())
+							+ Constant.Service_code + String.valueOf(middle) + vpnTraffic.getId());
+					hbaseTable.put(keyWord2, Constant.adt_cf, "id", vpnTraffic.getId());
+					hbaseTable.put(keyWord2, Constant.adt_cf, "ip", IP.getIP(vpnTraffic.getIpv4()));
+					hbaseTable.put(keyWord2, Constant.adt_cf, "bt", middle);
+					hbaseTable.put(keyWord2, Constant.adt_cf, "et", vpnTraffic.getEnd_time());
+					hbaseTable.put(keyWord2, Constant.adt_cf, "tr", vpnTraffic.getTraffic() - traffic_before);
+					hbaseTable.put(keyWord2, Constant.adt_cf, "se", Constant.Service_code);
+				} else {
+					String keyWord = CheckSumUtils.getMD5(String.valueOf(System.currentTimeMillis())
+							+ Constant.Service_code + String.valueOf(vpnTraffic.getBegin_time()));
+					hbaseTable.put(keyWord, Constant.adt_cf, "id", vpnTraffic.getId());
+					hbaseTable.put(keyWord, Constant.adt_cf, "ip", IP.getIP(vpnTraffic.getIpv4()));
+					hbaseTable.put(keyWord, Constant.adt_cf, "bt", vpnTraffic.getBegin_time());
+					hbaseTable.put(keyWord, Constant.adt_cf, "et", vpnTraffic.getEnd_time());
+					hbaseTable.put(keyWord, Constant.adt_cf, "tr", vpnTraffic.getTraffic());
+					hbaseTable.put(keyWord, Constant.adt_cf, "se", Constant.Service_code);
+				}
 			}
 			hbaseTable.execute();
 			hbaseTable.close();
