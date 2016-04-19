@@ -3,7 +3,7 @@
 #测试登录远程机器进行impala-shell操作
 ssh -T root@kafka05 << eof
 su hdfs;
-impala-shell;
+impala-shell
 show databases;
 use adt;
 show tables;

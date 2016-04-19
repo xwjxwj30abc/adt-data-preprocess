@@ -23,67 +23,87 @@ public class ExcuteShell {
 		try {
 			logger.info(System.currentTimeMillis() + "start.");
 			Process p = Runtime.getRuntime().exec(name);
+			PrintErrorThread errorThread = new PrintErrorThread(p.getErrorStream());
+			PrintNormalThread normalThread = new PrintNormalThread(p.getInputStream());
+			errorThread.start();
+			normalThread.start();
+
 			try {
 				success = p.waitFor();
-				logger.info(System.currentTimeMillis() + "finished.");
-			} catch (InterruptedException e1) {
-				e1.printStackTrace();
+			} catch (InterruptedException e) {
+				e.printStackTrace();
 			}
-			InputStream fis = p.getInputStream();
-			final BufferedReader brError = new BufferedReader(new InputStreamReader(p.getErrorStream(), "UTF-8"));
-			InputStreamReader isr = new InputStreamReader(fis, "UTF-8");
-			final BufferedReader br = new BufferedReader(isr);
-			Thread t1 = new Thread() {
-				@Override
-				public void run() {
-					String line = null;
-					try {
-						while ((line = brError.readLine()) != null) {
-							System.err.println(line);
-						}
-					} catch (IOException e) {
-						e.printStackTrace();
-					} finally {
-						try {
-							if (brError != null)
-								brError.close();
-						} catch (IOException e) {
-							e.printStackTrace();
-						}
-					}
-				}
-			};
-			Thread t2 = new Thread() {
-				@Override
-				public void run() {
-					String line = null;
-					try {
-						while ((line = br.readLine()) != null) {
-							logger.info(line);
-						}
-					} catch (IOException e) {
-						e.printStackTrace();
-					} finally {
-						try {
-							if (br != null)
-								br.close();
-						} catch (IOException e) {
-							e.printStackTrace();
-						}
-					}
-				}
-			};
-			t1.start();
-			t2.start();
+			logger.info(System.currentTimeMillis() + "finished.");
+
 		} catch (IOException e1) {
 			e1.printStackTrace();
 		}
 		return success;
+
+	}
+
+	public class PrintErrorThread extends Thread {
+
+		private InputStream inputStream;
+
+		public PrintErrorThread(InputStream inputStream) {
+			this.inputStream = inputStream;
+		}
+
+		@Override
+		public void run() {
+			String line = null;
+			BufferedReader brError = null;
+			try {
+				brError = new BufferedReader(new InputStreamReader(inputStream, "UTF-8"));
+				while ((line = brError.readLine()) != null) {
+					logger.error("error:" + line);
+				}
+			} catch (IOException e) {
+				e.printStackTrace();
+			} finally {
+				try {
+					if (brError != null)
+						brError.close();
+				} catch (IOException e) {
+					e.printStackTrace();
+				}
+			}
+		}
+	}
+
+	public class PrintNormalThread extends Thread {
+		private InputStream inputStream;
+
+		public PrintNormalThread(InputStream inputStream) {
+			this.inputStream = inputStream;
+		}
+
+		@Override
+		public void run() {
+			String line = null;
+			BufferedReader br = null;
+			try {
+				br = new BufferedReader(new InputStreamReader(inputStream, "UTF-8"));
+				while ((line = br.readLine()) != null) {
+					logger.info("normal:" + line);
+				}
+			} catch (IOException e) {
+				e.printStackTrace();
+			} finally {
+				try {
+					if (br != null)
+						br.close();
+				} catch (IOException e) {
+					e.printStackTrace();
+				}
+			}
+		}
 	}
 
 	public static void main(String[] args) {
 		//修改adt.sh可执行
-		ExcuteShell thread = new ExcuteShell("src/main/resources/adt.sh");
+		ExcuteShell thread = new ExcuteShell("src/main/resources/transfer.sh");
 		System.out.println(thread.run());
 		//new Thread(thread).start();
 	}
