@@ -7,8 +7,8 @@ import org.apache.ibatis.annotations.Select;
 
 import zx.soft.adt.domain.AccessList;
 import zx.soft.adt.domain.AlertList;
+import zx.soft.adt.domain.HotPlugLog;
 import zx.soft.adt.domain.IP2GEO;
-import zx.soft.adt.domain.PlcClient;
 import zx.soft.adt.domain.PlcNetInfo;
 import zx.soft.adt.domain.VPNTraffic;
 import zx.soft.adt.domain.WanIpv4;
@@ -28,20 +28,9 @@ public interface DataMapper {
 	public List<PlcNetInfo> getPlcNetInfoData(@Param("tablename") String tablename, @Param("from") int from);
 
 	@Select("SELECT id,Service_code,Rule_id,Destination_ip,Net_ending_ip,Net_ending_mac,"
-			+ "Destination_ipv6,Net_ending_ipv6,Matching_time,Service_type,Keyword1,"
-			+ "Keyword2,Keyword3,User_name,Certificate_type," + "Certificate_code,Org_name,Country FROM ${tablename}"
+			+ "Destination_ipv6,Net_ending_ipv6,Matching_time FROM ${tablename}"
 			+ " WHERE id >= #{from} AND id<(#{from}+1000)")
 	public List<AlertList> getAlertListData(@Param("tablename") String tablename, @Param("from") int from);
-
-	@Select("SELECT Service_code,Service_name, Address,Zip, Principal,"
-			+ "Principal_tel,Infor_man,Infor_man_tel,Infor_man_email,Producer_code,Status,Ending_number,"
-			+ "Server_number,Ip,Net_type,Practitioner_number,Net_monitor_department,Net_monitor_man,"
-			+ "Net_monitor_man_tel,Remark,NewSystem,UnitNo,SessionID,UdpHost,UdpPort,"
-			+ "UdpVer,ComputerOnline,ClientTime,LogDays,CommStatus,CommNormal,CommTiming,AlertLogAttr,UserLogAttr,DefaultAccessRule,"
-			+ "Device_ipv4,Device_ipv6,Device_port,Udp_online,Device_serial,"
-			+ "Device_version,Device_flow1,Device_flow2,Device_note,User_name,Certificate_type,"
-			+ "Certificate_code,Org_name,Country FROM ${tablename}  WHERE Service_code=#{Service_code}")
-	public PlcClient getPlcClientData(@Param("tablename") String tablename, @Param("Service_code") long Service_code);
 
 	@Select("SELECT id,Service_code,Net_ending_ip,Net_ending_name,Time,Net_ending_mac,Destination_ip,"
 			+ "Port,Service_type,Keyword1,Keyword2,Keyword3,Mac,Source_port,Net_ending_ipv6,Destination_ipv6,"
@@ -74,5 +63,14 @@ public interface DataMapper {
 
 	@Select("SELECT COUNT(*) FROM ${tablename} WHERE Service_code=#{Service_code}")
 	public int existsServiceCode(@Param("tablename") String tablename, @Param("Service_code") long Service_code);
+
+	//获取规则表里面的所有信息
+	@Select("SELECT id,Service_code,Rule_id,Rule_name,Matching_level,Rule_action,"
+			+ "Service_type,Keyword1,Keyword2,Keyword3,Matching_word,"
+			+ "Set_time,Validation_time,Manual_pause_time,Filter_method,Filter_argument FROM ${tablename}")
+	public List<PlcNetInfo> getAllPlcNetInfo(@Param("tablename") String tablename);
+
+	@Select("SELECT id,action,device,add_time,note FROM ${tablename} WHERE id>=#{from} AND id<(#{from}+1000)")
+	public List<HotPlugLog> getHotPlugLog(@Param("tablename") String tablename, @Param("from") int from);
 
 }

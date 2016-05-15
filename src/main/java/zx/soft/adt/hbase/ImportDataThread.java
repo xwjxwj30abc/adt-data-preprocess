@@ -9,8 +9,8 @@ import org.slf4j.LoggerFactory;
 
 import zx.soft.adt.domain.AccessList;
 import zx.soft.adt.domain.AlertList;
+import zx.soft.adt.domain.HotPlugLog;
 import zx.soft.adt.domain.IP2GEO;
-import zx.soft.adt.domain.PlcClient;
 import zx.soft.adt.domain.PlcNetInfo;
 import zx.soft.adt.domain.VPNTraffic;
 import zx.soft.adt.domain.WanIpv4;
@@ -49,8 +49,9 @@ public class ImportDataThread implements Runnable {
 			this.importVpnTraffic();
 		} else if (mysqlTablename.toLowerCase().matches(Constant.adt_wanipv4_table_name + ".*")) {
 			this.importWlanIp();
+		} else if (mysqlTablename.toLowerCase().matches(Constant.adt_hotpluglog_table_name + ".*")) {
+			this.importHotPlugLog();
 		}
-
 	}
 
 	private void importPlcNetInfo() {
@@ -60,6 +61,7 @@ public class ImportDataThread implements Runnable {
 			for (PlcNetInfo plcnetinfo : plcnetinfos) {
 				String rowKey = String.valueOf(Constant.Service_code) + plcnetinfo.getRule_id();
 				hbaseTable.put(rowKey, Constant.adt_cf, "sc", Constant.Service_code);
+				hbaseTable.put(rowKey, Constant.adt_cf, "ri", plcnetinfo.getRule_id());
 				hbaseTable.put(rowKey, Constant.adt_cf, "rn", plcnetinfo.getRule_name());
 				hbaseTable.put(rowKey, Constant.adt_cf, "ml", plcnetinfo.getMatching_level());
 				hbaseTable.put(rowKey, Constant.adt_cf, "ra", plcnetinfo.getRule_action());
@@ -84,6 +86,7 @@ public class ImportDataThread implements Runnable {
 		}
 	}
 
+	//将获取的AlertList信息并关联规则表，设备表
 	private void importAlertList() {
 		try {
 			List<AlertList> alertlists = this.sqlOperation.getAlertListData(mysqlTablename, from);
@@ -102,39 +105,35 @@ public class ImportDataThread implements Runnable {
 				} catch (NullPointerException ee) {
 					logger.warn(alertlist.getDestination_ip() + "");
 				}
-				hbaseTable.put(keyWord, Constant.adt_cf, "id", alertlist.getId());
-				hbaseTable.put(keyWord, Constant.adt_cf, "sec", Constant.Service_code);
-				hbaseTable.put(keyWord, Constant.adt_cf, "ru", alertlist.getRule_id());
 				hbaseTable.put(keyWord, Constant.adt_cf, "de4", alertlist.getDestination_ip());
+				hbaseTable.put(keyWord, Constant.adt_cf, "sec", Constant.Service_code);
+				String rule_id = alertlist.getRule_id();
+				hbaseTable.put(keyWord, Constant.adt_cf, "ru", rule_id);
+				hbaseTable.put(keyWord, Constant.adt_cf, "sr", String.valueOf(Constant.Service_code) + rule_id);
+				PlcNetInfo plcnetinfo = Constant.plcNetInfoMap.get(rule_id);
+				if (plcnetinfo != null) {
+					hbaseTable.put(keyWord, Constant.adt_cf, "rn", plcnetinfo.getRule_name());
+					hbaseTable.put(keyWord, Constant.adt_cf, "ml", plcnetinfo.getMatching_level());
+					hbaseTable.put(keyWord, Constant.adt_cf, "ra", plcnetinfo.getRule_action());
+					hbaseTable.put(keyWord, Constant.adt_cf, "st", plcnetinfo.getService_type());
+					hbaseTable.put(keyWord, Constant.adt_cf, "k1", plcnetinfo.getKeyword1());
+					hbaseTable.put(keyWord, Constant.adt_cf, "k2", plcnetinfo.getKeyword2());
+					hbaseTable.put(keyWord, Constant.adt_cf, "k3", plcnetinfo.getKeyword3());
+					hbaseTable.put(keyWord, Constant.adt_cf, "mw", plcnetinfo.getMatching_word());
+					hbaseTable.put(keyWord, Constant.adt_cf, "set", plcnetinfo.getSet_time());
+					hbaseTable.put(keyWord, Constant.adt_cf, "vt", plcnetinfo.getValidation_time());
+					hbaseTable.put(keyWord, Constant.adt_cf, "mpt", plcnetinfo.getManual_pause_time());
+					hbaseTable.put(keyWord, Constant.adt_cf, "fm", plcnetinfo.getFilter_method());
+					hbaseTable.put(keyWord, Constant.adt_cf, "fa", plcnetinfo.getFilter_argument());
+				}
 				hbaseTable.put(keyWord, Constant.adt_cf, "nep", alertlist.getNet_ending_ip());
 				hbaseTable.put(keyWord, Constant.adt_cf, "nem", alertlist.getNet_ending_mac());
 				hbaseTable.put(keyWord, Constant.adt_cf, "de6", alertlist.getDestination_ipv6());
 				hbaseTable.put(keyWord, Constant.adt_cf, "ne6", alertlist.getNet_ending_ipv6());
 				hbaseTable.put(keyWord, Constant.adt_cf, "ma", alertlist.getMatching_time());
-				hbaseTable.put(keyWord, Constant.adt_cf, "set", alertlist.getService_type());
-				hbaseTable.put(keyWord, Constant.adt_cf, "k1", alertlist.getKeyword1());
-				hbaseTable.put(keyWord, Constant.adt_cf, "k2", alertlist.getKeyword2());
-				hbaseTable.put(keyWord, Constant.adt_cf, "k3", alertlist.getKeyword3());
-				PlcClient plcClient = this.sqlOperation.getPlcClientData(Constant.adt_plcclient_table_name,
-						Constant.Service_code);
-				if (plcClient != null) {
-					hbaseTable.put(keyWord, Constant.adt_cf, "ys", plcClient.getUser_name());
-					hbaseTable.put(keyWord, Constant.adt_cf, "cet", plcClient.getCertificate_type());
-					hbaseTable.put(keyWord, Constant.adt_cf, "cec", plcClient.getCertificate_code());
-					hbaseTable.put(keyWord, Constant.adt_cf, "or", plcClient.getOrg_name());
-					hbaseTable.put(keyWord, Constant.adt_cf, "co", plcClient.getCountry());
-				} else {
-					hbaseTable.put(keyWord, Constant.adt_cf, "ys", "");
-					hbaseTable.put(keyWord, Constant.adt_cf, "cet", "");
-					hbaseTable.put(keyWord, Constant.adt_cf, "cec", "");
-					hbaseTable.put(keyWord, Constant.adt_cf, "or", "");
-					hbaseTable.put(keyWord, Constant.adt_cf, "co", "");
-					logger.warn("存在service_code=" + Constant.Service_code + "对应的设备用户信息未提供，请尽快添加");
-				}
-
-				hbaseTable.execute();
-				hbaseTable.close();
 			}
+			hbaseTable.execute();
+			hbaseTable.close();
 			logger.info("succeed insert" + alertlists.size());
 			Constant.CURRENT_NUM.addAndGet(alertlists.size());
 			logger.info("插入数据量：" + Constant.CURRENT_NUM + ";数据总量：" + Constant.SUM_OF_DATA);
@@ -289,6 +288,28 @@ public class ImportDataThread implements Runnable {
 		} catch (Exception e) {
 			logger.error(e.getMessage());
 		}
+	}
 
+	private void importHotPlugLog() {
+		try {
+			List<HotPlugLog> hotPlugLogs = this.sqlOperation.getHotPlugLog(mysqlTablename, from);
+			HBaseTable hbaseTable = new HBaseTable(conn, Constant.adt_hotpluglog_table_name);
+			for (HotPlugLog hotPlugLog : hotPlugLogs) {
+				String keyWord = CheckSumUtils.getMD5(String.valueOf(Constant.Service_code)
+						+ String.valueOf(hotPlugLog.getAdd_time()) + String.valueOf(hotPlugLog.getId()));
+				hbaseTable.put(keyWord, Constant.adt_cf, "id", hotPlugLog.getId());
+				hbaseTable.put(keyWord, Constant.adt_cf, "ac", hotPlugLog.getAction());
+				hbaseTable.put(keyWord, Constant.adt_cf, "de", hotPlugLog.getDevice());
+				hbaseTable.put(keyWord, Constant.adt_cf, "at", hotPlugLog.getAdd_time());
+				hbaseTable.put(keyWord, Constant.adt_cf, "no", hotPlugLog.getNote());
+				hbaseTable.put(keyWord, Constant.adt_cf, "se", Constant.Service_code);
+			}
+			hbaseTable.execute();
+			hbaseTable.close();
+			Constant.CURRENT_NUM.addAndGet(hotPlugLogs.size());
+			logger.info("共插入数据量：" + Constant.CURRENT_NUM + ";数据总量：" + Constant.SUM_OF_DATA);
+		} catch (Exception e) {
+			logger.error(e.getMessage());
+		}
 	}
 }

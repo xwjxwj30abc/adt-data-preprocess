@@ -17,18 +17,20 @@ public class AlertList {
 	private String Destination_ipv6 = "";
 	private String Net_ending_ipv6 = "";
 	private long Matching_time;
-	private int Service_type;
-	private String Keyword1 = "";
-	private String Keyword2 = "";
-	private String Keyword3 = "";
-	private String User_name = "";
-	private String Certificate_type = "";
-	private String Certificate_code = "";
-	private String Org_name = "";
-	private String Country = "";
-	private double Jd;
-	private double Wd;
-	private String Country_name = "";
+
+	//	private int Service_type;
+	//	private String Keyword1 = "";
+	//	private String Keyword2 = "";
+	//	private String Keyword3 = "";
+	//	private String User_name = "";
+	//	private String Certificate_type = "";
+	//	private String Certificate_code = "";
+	//	private String Org_name = "";
+	//	private String Country = "";
+
+	//	private double Jd;
+	//	private double Wd;
+	//	private String Country_name = "";
 
 	public AlertList() {
 	}
@@ -105,113 +107,12 @@ public class AlertList {
 		Matching_time = matching_time;
 	}
 
-	public int getService_type() {
-		return Service_type;
-	}
-
-	public void setService_type(int service_type) {
-		Service_type = service_type;
-	}
-
-	public String getKeyword1() {
-		return Keyword1;
-	}
-
-	public void setKeyword1(String keyword1) {
-		Keyword1 = keyword1;
-	}
-
-	public String getKeyword2() {
-		return Keyword2;
-	}
-
-	public void setKeyword2(String keyword2) {
-		Keyword2 = keyword2;
-	}
-
-	public String getKeyword3() {
-		return Keyword3;
-	}
-
-	public void setKeyword3(String keyword3) {
-		Keyword3 = keyword3;
-	}
-
-	public String getUser_name() {
-		return User_name;
-	}
-
-	public void setUser_name(String user_name) {
-		User_name = user_name;
-	}
-
-	public String getCertificate_type() {
-		return Certificate_type;
-	}
-
-	public void setCertificate_type(String certificate_type) {
-		Certificate_type = certificate_type;
-	}
-
-	public String getCertificate_code() {
-		return Certificate_code;
-	}
-
-	public void setCertificate_code(String certificate_code) {
-		Certificate_code = certificate_code;
-	}
-
-	public String getOrg_name() {
-		return Org_name;
-	}
-
-	public void setOrg_name(String org_name) {
-		Org_name = org_name;
-	}
-
-	public String getCountry() {
-		return Country;
-	}
-
-	public void setCountry(String country) {
-		Country = country;
-	}
-
-	public double getJd() {
-		return Jd;
-	}
-
-	public void setJd(double jd) {
-		Jd = jd;
-	}
-
-	public double getWd() {
-		return Wd;
-	}
-
-	public void setWd(double wd) {
-		Wd = wd;
-	}
-
-	public String getCountry_name() {
-		return Country_name;
-	}
-
-	public void setCountry_name(String country_name) {
-		Country_name = country_name;
-	}
-
 	@Override
 	public String toString() {
-		return "AlertList [id=" + id + ", Service_code=" + Service_code + ", Rule_id=" + Rule_id
-				+ ", Destination_ip=" + Destination_ip + ", Net_ending_ip=" + Net_ending_ip
-				+ ", Net_ending_mac=" + Net_ending_mac + ", Destination_ipv6=" + Destination_ipv6
-				+ ", Net_ending_ipv6=" + Net_ending_ipv6 + ", Matching_time=" + Matching_time
-				+ ", Service_type=" + Service_type + ", Keyword1=" + Keyword1 + ", Keyword2="
-				+ Keyword2 + ", Keyword3=" + Keyword3 + ", User_name=" + User_name
-				+ ", Certificate_type=" + Certificate_type + ", Certificate_code="
-				+ Certificate_code + ", Org_name=" + Org_name + ", Country=" + Country + ", Jd="
-				+ Jd + ", Wd=" + Wd + ", Country_name=" + Country_name + "]";
+		return "AlertList [id=" + id + ", Service_code=" + Service_code + ", Rule_id=" + Rule_id + ", Destination_ip="
+				+ Destination_ip + ", Net_ending_ip=" + Net_ending_ip + ", Net_ending_mac=" + Net_ending_mac
+				+ ", Destination_ipv6=" + Destination_ipv6 + ", Net_ending_ipv6=" + Net_ending_ipv6
+				+ ", Matching_time=" + Matching_time + "]";
 	}
 
 }

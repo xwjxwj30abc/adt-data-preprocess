@@ -12,8 +12,8 @@ import org.slf4j.LoggerFactory;
 import zx.soft.adt.dao.DataMapper;
 import zx.soft.adt.domain.AccessList;
 import zx.soft.adt.domain.AlertList;
+import zx.soft.adt.domain.HotPlugLog;
 import zx.soft.adt.domain.IP2GEO;
-import zx.soft.adt.domain.PlcClient;
 import zx.soft.adt.domain.PlcNetInfo;
 import zx.soft.adt.domain.VPNTraffic;
 import zx.soft.adt.domain.WanIpv4;
@@ -46,15 +46,15 @@ public class SQLOperation implements DataMapper {
 		}
 	}
 
-	@Override
-	public PlcClient getPlcClientData(String tablename, long Service_code) {
-
-		try (SqlSession sqlSession = sqlSessionFactory_adt.openSession();) {
-			DataMapper dataMapper = sqlSession.getMapper(DataMapper.class);
-			PlcClient plcclient = dataMapper.getPlcClientData(tablename, Service_code);
-			return plcclient;
-		}
-	}
+	//	@Override
+	//	public PlcClient getPlcClientData(String tablename, long Service_code) {
+	//
+	//		try (SqlSession sqlSession = sqlSessionFactory_adt.openSession();) {
+	//			DataMapper dataMapper = sqlSession.getMapper(DataMapper.class);
+	//			PlcClient plcclient = dataMapper.getPlcClientData(tablename, Service_code);
+	//			return plcclient;
+	//		}
+	//}
 
 	@Override
 	public List<AccessList> getAccessListData(String tablename, int from) {
@@ -137,6 +137,16 @@ public class SQLOperation implements DataMapper {
 	}
 
 	@Override
+	public List<PlcNetInfo> getAllPlcNetInfo(String tablename) {
+		try (SqlSession sqlSession = sqlSessionFactory_development.openSession();) {
+			DataMapper dataMapper = sqlSession.getMapper(DataMapper.class);
+			List<PlcNetInfo> plcnetinfos = dataMapper.getAllPlcNetInfo(tablename);
+			logger.info("plcnetinfo size = " + plcnetinfos.size());
+			return plcnetinfos;
+		}
+	}
+
+	@Override
 	public List<VPNTraffic> getVPNTrafficData(String tablename, int from) {
 		try (SqlSession sqlSession = sqlSessionFactory_development.openSession();) {
 			DataMapper dataMapper = sqlSession.getMapper(DataMapper.class);
@@ -189,14 +199,26 @@ public class SQLOperation implements DataMapper {
 		}
 	}
 
+	@Override
+	public List<HotPlugLog> getHotPlugLog(String tablename, int from) {
+		try (SqlSession sqlSession = sqlSessionFactory_development.openSession();) {
+			DataMapper dataMapper = sqlSession.getMapper(DataMapper.class);
+			List<HotPlugLog> hotPlugLogs = dataMapper.getHotPlugLog(tablename, from);
+			logger.info("get id from " + from + " to " + (from + hotPlugLogs.size()));
+			return hotPlugLogs;
+		}
+	}
+
 	public static void main(String[] args) {
 		SQLOperation o = new SQLOperation();
-		long service_code = o.getServiceCode("plcClient");
-		System.out.println(service_code);
-		if (o.existsServiceCode(Constant.adt_plcclient_table_name, service_code) == 0) {
-			o.insertServiceCode(Constant.adt_plcclient_table_name, service_code,
-					String.valueOf(System.currentTimeMillis()));
-		}
+		List<PlcNetInfo> lists = o.getAllPlcNetInfo("plcNetInfo");
+		System.out.println(lists);
+		//		long service_code = o.getServiceCode("plcClient");
+		//		System.out.println(service_code);
+		//		if (o.existsServiceCode(Constant.adt_plcclient_table_name, service_code) == 0) {
+		//			o.insertServiceCode(Constant.adt_plcclient_table_name, service_code,
+		//					String.valueOf(System.currentTimeMillis()));
+		//		}
 
 	}
 

@@ -2,14 +2,16 @@ package zx.soft.adt.hbase;
 
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Properties;
-import java.util.concurrent.TimeUnit;
 
 import org.apache.hadoop.hbase.MasterNotRunningException;
 import org.apache.hadoop.hbase.ZooKeeperConnectionException;
 import org.apache.hadoop.hbase.client.HConnection;
 
+import zx.soft.adt.domain.PlcNetInfo;
 import zx.soft.adt.utils.Constant;
 import zx.soft.adt.utils.IP;
 import zx.soft.adt.utils.SQLOperation;
@@ -41,6 +43,9 @@ public class WriteToHBase {
 		this.initHBaseEnv();
 		//获取vpn库中所有待处理的表名
 		List<String> usefultablenames = this.getUsefulTableNames();
+		//初始化规则PlcNetInfo Map
+		String plcNetInfoTableName = this.getPlcNetInfoTableName(usefultablenames);
+		this.initPlcNetInfoMap(plcNetInfoTableName);
 		//获取待发送数据总量
 		Constant.SUM_OF_DATA = getSumOfData(usefultablenames);
 		//发送所有待处理表中的数据
@@ -49,7 +54,7 @@ public class WriteToHBase {
 
 	//创建或更新HBase中的表
 	private void initHBaseEnv() throws MasterNotRunningException, ZooKeeperConnectionException, IOException,
-	ServiceException {
+			ServiceException {
 		HBaseClient client = new HBaseClient();
 		if (client.isTableExists(Constant.adt_alertList_table_name)) {
 			client.deleteTable(Constant.adt_alertList_table_name);
@@ -71,6 +76,9 @@ public class WriteToHBase {
 		}
 		if (!client.isTableExists(Constant.adt_wanipv4_table_name)) {
 			client.createTable(Constant.adt_wanipv4_table_name, Constant.adt_cf);
+		}
+		if (!client.isTableExists(Constant.adt_hotpluglog_table_name)) {
+			client.createTable(Constant.adt_hotpluglog_table_name, Constant.adt_cf);
 		}
 		client.close();
 	}
@@ -112,6 +120,26 @@ public class WriteToHBase {
 		Constant.Service_code = Service_code_tmp;
 	}
 
+	//初始化规则plcNetInfo　Map
+	private void initPlcNetInfoMap(String plcNetInfoTableName) {
+		List<PlcNetInfo> lists = this.sqlOperation.getAllPlcNetInfo(plcNetInfoTableName);
+		Map<String, PlcNetInfo> maps = new HashMap<>();
+		for (PlcNetInfo plcNetInfo : lists) {
+			maps.put(plcNetInfo.getRule_id(), plcNetInfo);
+		}
+		Constant.plcNetInfoMap = maps;
+	}
+
+	//筛选出规则表
+	private String getPlcNetInfoTableName(List<String> alltablenames) {
+		for (String tablename : alltablenames) {
+			if (tablename.toLowerCase().matches(Constant.adt_plcnetinfo_table_name + ".*")) {
+				return tablename;
+			}
+		}
+		return "";
+	}
+
 	//获取vpn库中所有待处理的表表名
 	private List<String> getUsefulTableNames() {
 		List<String> alltablenames = this.sqlOperation.getAllTableNames(Constant.adt_mysql_database_name);
@@ -127,6 +155,8 @@ public class WriteToHBase {
 				usefulTableNames.add(tablename);
 			} else if (tablename.toLowerCase().matches(Constant.adt_wanipv4_table_name + ".*")) {
 				usefulTableNames.add(tablename);
+			} else if (tablename.toLowerCase().matches(Constant.adt_hotpluglog_table_name + ".*")) {
+				usefulTableNames.add(tablename);
 			}
 		}
 		return usefulTableNames;
@@ -134,18 +164,10 @@ public class WriteToHBase {
 
 	public static void main(String[] args) throws MasterNotRunningException, ZooKeeperConnectionException, IOException,
 			ServiceException {
-		for (int i = 1; i < 4; i++) {
-			WriteToHBase w = new WriteToHBase();
-			w.write();
-			System.err.println("第" + i + "次导入数据");
-			try {
-				System.err.println("开始睡眠6小时");
-				TimeUnit.HOURS.sleep(6);
-			} catch (InterruptedException e) {
-				e.printStackTrace();
-			}
-		}
-
+		WriteToHBase w = new WriteToHBase();
+		w.write();
+		//		String tableName = "plcNetInfo";
+		//		System.out.println(tableName.toLowerCase().matches(Constant.adt_plcnetinfo_table_name + ".*"));
 	}
 
 }
