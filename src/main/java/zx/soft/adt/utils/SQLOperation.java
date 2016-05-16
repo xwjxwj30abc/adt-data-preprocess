@@ -46,16 +46,6 @@ public class SQLOperation implements DataMapper {
 		}
 	}
 
-	//	@Override
-	//	public PlcClient getPlcClientData(String tablename, long Service_code) {
-	//
-	//		try (SqlSession sqlSession = sqlSessionFactory_adt.openSession();) {
-	//			DataMapper dataMapper = sqlSession.getMapper(DataMapper.class);
-	//			PlcClient plcclient = dataMapper.getPlcClientData(tablename, Service_code);
-	//			return plcclient;
-	//		}
-	//}
-
 	@Override
 	public List<AccessList> getAccessListData(String tablename, int from) {
 

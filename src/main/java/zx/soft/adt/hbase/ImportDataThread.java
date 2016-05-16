@@ -103,7 +103,7 @@ public class ImportDataThread implements Runnable {
 						hbaseTable.put(keyWord, Constant.adt_cf, "wd", geo.getWD());
 					}
 				} catch (NullPointerException ee) {
-					logger.warn(alertlist.getDestination_ip() + "");
+					logger.warn(alertlist.getDestination_ip() + ":无法解析该ip所处地址");
 				}
 				hbaseTable.put(keyWord, Constant.adt_cf, "de4", alertlist.getDestination_ip());
 				hbaseTable.put(keyWord, Constant.adt_cf, "sec", Constant.Service_code);
