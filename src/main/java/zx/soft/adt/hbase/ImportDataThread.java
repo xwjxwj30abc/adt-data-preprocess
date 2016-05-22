@@ -228,8 +228,8 @@ public class ImportDataThread implements Runnable {
 			for (VPNTraffic vpnTraffic : vpnTraffics) {
 				long middle = CalendarUtil.belongToOneHour(vpnTraffic.getBegin_time(), vpnTraffic.getEnd_time());
 				if (middle != 0) {
-					String keyWord = CheckSumUtils.getMD5(String.valueOf(System.currentTimeMillis())
-							+ Constant.Service_code + String.valueOf(vpnTraffic.getBegin_time()));
+					String keyWord = CheckSumUtils.getMD5(Constant.Service_code
+							+ String.valueOf(vpnTraffic.getBegin_time()) + String.valueOf(middle) + vpnTraffic.getId());
 					hbaseTable.put(keyWord, Constant.adt_cf, "id", vpnTraffic.getId());
 					hbaseTable.put(keyWord, Constant.adt_cf, "ip", IP.getIP(vpnTraffic.getIpv4()));
 					hbaseTable.put(keyWord, Constant.adt_cf, "bt", vpnTraffic.getBegin_time());
@@ -240,8 +240,8 @@ public class ImportDataThread implements Runnable {
 					hbaseTable.put(keyWord, Constant.adt_cf, "tr", traffic_before);
 					hbaseTable.put(keyWord, Constant.adt_cf, "se", Constant.Service_code);
 
-					String keyWord2 = CheckSumUtils.getMD5(String.valueOf(System.currentTimeMillis())
-							+ Constant.Service_code + String.valueOf(middle) + vpnTraffic.getId());
+					String keyWord2 = CheckSumUtils.getMD5(Constant.Service_code + String.valueOf(middle)
+							+ String.valueOf(vpnTraffic.getEnd_time()) + vpnTraffic.getId());
 					hbaseTable.put(keyWord2, Constant.adt_cf, "id", vpnTraffic.getId());
 					hbaseTable.put(keyWord2, Constant.adt_cf, "ip", IP.getIP(vpnTraffic.getIpv4()));
 					hbaseTable.put(keyWord2, Constant.adt_cf, "bt", middle);
@@ -249,8 +249,9 @@ public class ImportDataThread implements Runnable {
 					hbaseTable.put(keyWord2, Constant.adt_cf, "tr", vpnTraffic.getTraffic() - traffic_before);
 					hbaseTable.put(keyWord2, Constant.adt_cf, "se", Constant.Service_code);
 				} else {
-					String keyWord = CheckSumUtils.getMD5(String.valueOf(System.currentTimeMillis())
-							+ Constant.Service_code + String.valueOf(vpnTraffic.getBegin_time()));
+					String keyWord = CheckSumUtils.getMD5(Constant.Service_code
+							+ String.valueOf(vpnTraffic.getBegin_time()) + String.valueOf(vpnTraffic.getEnd_time())
+							+ vpnTraffic.getId());
 					hbaseTable.put(keyWord, Constant.adt_cf, "id", vpnTraffic.getId());
 					hbaseTable.put(keyWord, Constant.adt_cf, "ip", IP.getIP(vpnTraffic.getIpv4()));
 					hbaseTable.put(keyWord, Constant.adt_cf, "bt", vpnTraffic.getBegin_time());
@@ -274,7 +275,7 @@ public class ImportDataThread implements Runnable {
 			List<WanIpv4> wanIpv4s = this.sqlOperation.getWanIpv4Data(mysqlTablename, from);
 			HBaseTable hbaseTable = new HBaseTable(conn, Constant.adt_wanipv4_table_name);
 			for (WanIpv4 wanIpv4 : wanIpv4s) {
-				String keyWord = CheckSumUtils.getMD5(String.valueOf(System.currentTimeMillis()) + mysqlTablename
+				String keyWord = CheckSumUtils.getMD5(Constant.Service_code + String.valueOf(wanIpv4.getAdd_time())
 						+ String.valueOf(wanIpv4.getId()));
 				hbaseTable.put(keyWord, Constant.adt_cf, "id", wanIpv4.getId());
 				hbaseTable.put(keyWord, Constant.adt_cf, "ip", IP.getIP(wanIpv4.getIpv4()));
