@@ -9,8 +9,8 @@ import org.slf4j.LoggerFactory;
 
 import zx.soft.adt.domain.AccessList;
 import zx.soft.adt.domain.AlertList;
+import zx.soft.adt.domain.GEO;
 import zx.soft.adt.domain.HotPlugLog;
-import zx.soft.adt.domain.IP2GEO;
 import zx.soft.adt.domain.PlcNetInfo;
 import zx.soft.adt.domain.VPNTraffic;
 import zx.soft.adt.domain.WanIpv4;
@@ -91,7 +91,7 @@ public class ImportDataThread implements Runnable {
 		try {
 			List<AlertList> alertlists = this.sqlOperation.getAlertListData(mysqlTablename, from);
 			HBaseTable hbaseTable = new HBaseTable(conn, Constant.adt_alertList_table_name);
-			IP2GEO geo = null;
+			GEO geo = null;
 			for (AlertList alertlist : alertlists) {
 				String keyWord = CheckSumUtils.getMD5(String.valueOf(System.currentTimeMillis())
 						+ String.valueOf(Constant.Service_code) + String.valueOf(alertlist.getId()));
@@ -146,7 +146,7 @@ public class ImportDataThread implements Runnable {
 		try {
 			List<AccessList> accesslists = this.sqlOperation.getAccessListData(mysqlTablename, from);
 			HBaseTable hbaseTable = new HBaseTable(conn, Constant.adt_accesslist_table_name);
-			IP2GEO geo = null;
+			GEO geo = null;
 			for (AccessList accesslist : accesslists) {
 				String keyWord = CheckSumUtils.getMD5(String.valueOf(System.currentTimeMillis()) + mysqlTablename
 						+ String.valueOf(accesslist.getId()));
@@ -236,7 +236,7 @@ public class ImportDataThread implements Runnable {
 					hbaseTable.put(keyWord, Constant.adt_cf, "et", middle);
 					long traffic_before = (vpnTraffic.getTraffic()
 							/ (vpnTraffic.getEnd_time() - vpnTraffic.getBegin_time()) * (middle - vpnTraffic
-									.getBegin_time()));
+							.getBegin_time()));
 					hbaseTable.put(keyWord, Constant.adt_cf, "tr", traffic_before);
 					hbaseTable.put(keyWord, Constant.adt_cf, "se", Constant.Service_code);
 

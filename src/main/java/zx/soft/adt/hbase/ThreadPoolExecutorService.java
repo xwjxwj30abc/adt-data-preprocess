@@ -10,15 +10,13 @@ import org.slf4j.LoggerFactory;
 import zx.soft.adt.utils.SQLOperation;
 import zx.soft.utils.threads.ApplyThreadPool;
 
-public class ThreadCore {
+public class ThreadPoolExecutorService {
 
-	private static Logger logger = LoggerFactory.getLogger(ThreadCore.class);
+	private static Logger logger = LoggerFactory.getLogger(ThreadPoolExecutorService.class);
 
 	private static ThreadPoolExecutor pool;
-	private HConnection conn;
-	private SQLOperation sqlOperation;
 
-	public ThreadCore(HConnection conn, SQLOperation sqlOperation) {
+	public ThreadPoolExecutorService() {
 		pool = ApplyThreadPool.getThreadPoolExector(2);
 		Runtime.getRuntime().addShutdownHook(new Thread(new Runnable() {
 			@Override
@@ -27,12 +25,11 @@ public class ThreadCore {
 				logger.info("pool is shutdown");
 			}
 		}));
-		this.conn = conn;
-		this.sqlOperation = sqlOperation;
+
 	}
 
-	public void addRunnable(String tablename, int from) {
-		Runnable runnable = new ImportDataThread(this.conn, this.sqlOperation, tablename, from);
+	public void addRunnable(HConnection conn, SQLOperation sqlOperation, String tablename, int from) {
+		Runnable runnable = new ImportDataThread(conn, sqlOperation, tablename, from);
 		if (!pool.isShutdown()) {
 			try {
 				pool.execute(runnable);

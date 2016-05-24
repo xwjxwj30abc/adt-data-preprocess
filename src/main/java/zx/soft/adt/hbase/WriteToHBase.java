@@ -34,7 +34,11 @@ public class WriteToHBase {
 		String ipDatabase = p.getProperty("dir");
 		IP.load(ipDatabase);
 	}
-	private SQLOperation sqlOperation = new SQLOperation();
+	private SQLOperation sqlOperation;
+
+	public WriteToHBase(SQLOperation sqlOperation) {
+		this.sqlOperation = sqlOperation;
+	}
 
 	public void write() throws MasterNotRunningException, ZooKeeperConnectionException, IOException, ServiceException {
 		//初始化全局变量Service_code
@@ -54,7 +58,7 @@ public class WriteToHBase {
 
 	//创建或更新HBase中的表
 	private void initHBaseEnv() throws MasterNotRunningException, ZooKeeperConnectionException, IOException,
-			ServiceException {
+	ServiceException {
 		HBaseClient client = new HBaseClient();
 		if (client.isTableExists(Constant.adt_alertList_table_name)) {
 			client.deleteTable(Constant.adt_alertList_table_name);
@@ -96,13 +100,13 @@ public class WriteToHBase {
 	//多线程导入数据
 	private void sendData(List<String> usefultablenames) {
 		HConnection conn = HConn.getHConnection();
-		ThreadCore threadCore = new ThreadCore(conn, this.sqlOperation);
+		ThreadPoolExecutorService threadCore = new ThreadPoolExecutorService();
 		for (String tablename : usefultablenames) {
 			int count = this.sqlOperation.getMaxId(tablename);
-			int pageCount = count / 1000;
+			int pageCount = count / Constant.PAGE_SIZE;
 			for (int i = 0; i < pageCount + 1; i++) {
-				int from = i * 1000;
-				threadCore.addRunnable(tablename, from);
+				int from = i * Constant.PAGE_SIZE;
+				threadCore.addRunnable(conn, this.sqlOperation, tablename, from);
 			}
 		}
 		threadCore.close();
@@ -145,17 +149,12 @@ public class WriteToHBase {
 		List<String> alltablenames = this.sqlOperation.getAllTableNames(Constant.adt_mysql_database_name);
 		List<String> usefulTableNames = new ArrayList<>();
 		for (String tablename : alltablenames) {
-			if (tablename.toLowerCase().matches(Constant.adt_plcnetinfo_table_name + ".*")) {
-				usefulTableNames.add(tablename);
-			} else if (tablename.toLowerCase().matches(Constant.adt_alertList_table_name + ".*")) {
-				usefulTableNames.add(tablename);
-			} else if (tablename.toLowerCase().matches(Constant.adt_accesslist_table_name + ".*")) {
-				usefulTableNames.add(tablename);
-			} else if (tablename.toLowerCase().matches(Constant.adt_traffic_table_name + ".*")) {
-				usefulTableNames.add(tablename);
-			} else if (tablename.toLowerCase().matches(Constant.adt_wanipv4_table_name + ".*")) {
-				usefulTableNames.add(tablename);
-			} else if (tablename.toLowerCase().matches(Constant.adt_hotpluglog_table_name + ".*")) {
+			if (tablename.toLowerCase().matches(Constant.adt_plcnetinfo_table_name + ".*")
+					| tablename.toLowerCase().matches(Constant.adt_alertList_table_name + ".*")
+					| tablename.toLowerCase().matches(Constant.adt_accesslist_table_name + ".*")
+					| tablename.toLowerCase().matches(Constant.adt_traffic_table_name + ".*")
+					| tablename.toLowerCase().matches(Constant.adt_wanipv4_table_name + ".*")
+					| tablename.toLowerCase().matches(Constant.adt_hotpluglog_table_name + ".*")) {
 				usefulTableNames.add(tablename);
 			}
 		}
@@ -164,10 +163,9 @@ public class WriteToHBase {
 
 	public static void main(String[] args) throws MasterNotRunningException, ZooKeeperConnectionException, IOException,
 			ServiceException {
-		WriteToHBase w = new WriteToHBase();
+		WriteToHBase w = new WriteToHBase(new SQLOperation());
 		w.write();
 		//		String tableName = "plcNetInfo";
 		//		System.out.println(tableName.toLowerCase().matches(Constant.adt_plcnetinfo_table_name + ".*"));
 	}
-
 }

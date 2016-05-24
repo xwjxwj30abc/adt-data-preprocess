@@ -18,20 +18,6 @@ public class AlertList {
 	private String Net_ending_ipv6 = "";
 	private long Matching_time;
 
-	//	private int Service_type;
-	//	private String Keyword1 = "";
-	//	private String Keyword2 = "";
-	//	private String Keyword3 = "";
-	//	private String User_name = "";
-	//	private String Certificate_type = "";
-	//	private String Certificate_code = "";
-	//	private String Org_name = "";
-	//	private String Country = "";
-
-	//	private double Jd;
-	//	private double Wd;
-	//	private String Country_name = "";
-
 	public AlertList() {
 	}
 

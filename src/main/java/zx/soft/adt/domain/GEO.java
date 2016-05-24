@@ -6,16 +6,16 @@ package zx.soft.adt.domain;
  * @author wanggang
  *
  */
-public class IP2GEO {
+public class GEO {
 
 	private String COUNTRY;
 	private double JD;
 	private double WD;
 
-	public IP2GEO() {
+	public GEO() {
 	}
 
-	public IP2GEO(String COUNTRY, double JD, double WD) {
+	public GEO(String COUNTRY, double JD, double WD) {
 		this.COUNTRY = COUNTRY;
 		this.JD = JD;
 		this.WD = WD;
@@ -47,7 +47,7 @@ public class IP2GEO {
 
 	@Override
 	public String toString() {
-		return "IP2GEO [COUNTRY=" + COUNTRY + ", JD=" + JD + ", WD=" + WD + "]";
+		return "GEO [COUNTRY=" + COUNTRY + ", JD=" + JD + ", WD=" + WD + "]";
 	}
 
 }

@@ -23,6 +23,7 @@ public class Constant {
 	public static long Service_code = 0;
 	public static AtomicLong CURRENT_NUM = new AtomicLong(0L);
 	public static long SUM_OF_DATA = 0;
+	public static final int PAGE_SIZE = 1000;
 
 	public static Map<String, PlcNetInfo> plcNetInfoMap = new HashMap<>();
 

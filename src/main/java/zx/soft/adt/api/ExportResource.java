@@ -10,6 +10,7 @@ import org.slf4j.LoggerFactory;
 import zx.soft.adt.hbase.WriteToHBase;
 import zx.soft.adt.utils.Constant;
 import zx.soft.adt.utils.ExcuteShell;
+import zx.soft.adt.utils.SQLOperation;
 import zx.soft.utils.config.ConfigUtil;
 
 /**
@@ -43,7 +44,7 @@ public class ExportResource extends ServerResource {
 
 		@Override
 		public void run() {
-			WriteToHBase writer = new WriteToHBase();
+			WriteToHBase writer = new WriteToHBase(new SQLOperation());
 			String dataTransferShellPath = this.props.getProperty("data.transfer.shell.path");
 			ExcuteShell shell = new ExcuteShell(dataTransferShellPath);
 			try {

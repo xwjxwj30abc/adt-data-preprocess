@@ -12,8 +12,8 @@ import org.slf4j.LoggerFactory;
 import zx.soft.adt.dao.DataMapper;
 import zx.soft.adt.domain.AccessList;
 import zx.soft.adt.domain.AlertList;
+import zx.soft.adt.domain.GEO;
 import zx.soft.adt.domain.HotPlugLog;
-import zx.soft.adt.domain.IP2GEO;
 import zx.soft.adt.domain.PlcNetInfo;
 import zx.soft.adt.domain.VPNTraffic;
 import zx.soft.adt.domain.WanIpv4;
@@ -87,19 +87,19 @@ public class SQLOperation implements DataMapper {
 	}
 
 	@Override
-	public IP2GEO getGEO(String tablename, String country) {
+	public GEO getGEO(String tablename, String country) {
 		try (SqlSession sqlSession = sqlSessionFactory_adt.openSession();) {
 			DataMapper dataMapper = sqlSession.getMapper(DataMapper.class);
-			IP2GEO geo = dataMapper.getGEO(tablename, country);
+			GEO geo = dataMapper.getGEO(tablename, country);
 			return geo;
 		}
 	}
 
 	@Override
-	public List<IP2GEO> getALLGEO(String tablename) {
+	public List<GEO> getALLGEO(String tablename) {
 		try (SqlSession sqlSession = sqlSessionFactory_adt.openSession();) {
 			DataMapper dataMapper = sqlSession.getMapper(DataMapper.class);
-			List<IP2GEO> geos = new ArrayList<>();
+			List<GEO> geos = new ArrayList<>();
 			geos = dataMapper.getALLGEO(tablename);
 			return geos;
 		}
@@ -174,7 +174,7 @@ public class SQLOperation implements DataMapper {
 			if (exist == 0) {
 				logger.info("do not exist the service_code");
 			} else {
-				logger.info("exist the service_code");
+				logger.info(" exist the service_code");
 			}
 			return exist;
 		}
@@ -201,8 +201,8 @@ public class SQLOperation implements DataMapper {
 
 	public static void main(String[] args) {
 		SQLOperation o = new SQLOperation();
-		List<PlcNetInfo> lists = o.getAllPlcNetInfo("plcNetInfo");
-		System.out.println(lists);
+		List<GEO> geos = o.getALLGEO("countryinfo");
+		System.out.println(geos.get(0));
 		//		long service_code = o.getServiceCode("plcClient");
 		//		System.out.println(service_code);
 		//		if (o.existsServiceCode(Constant.adt_plcclient_table_name, service_code) == 0) {
