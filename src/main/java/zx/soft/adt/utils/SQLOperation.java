@@ -1,5 +1,10 @@
 package zx.soft.adt.utils;
 
+import java.io.IOException;
+import java.sql.Connection;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.sql.Statement;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -29,10 +34,12 @@ public class SQLOperation implements DataMapper {
 	private static Logger logger = LoggerFactory.getLogger(SQLOperation.class);
 	private SqlSessionFactory sqlSessionFactory_development;
 	private SqlSessionFactory sqlSessionFactory_adt;
+	private MySQLConnection mysqlConnection;
 
 	public SQLOperation() {
 		sqlSessionFactory_adt = MybatisConfig.getAdtSqlSessionFactory();
 		sqlSessionFactory_development = new MybatisConfig().getDevelopmentSqlSessionFactory();
+		mysqlConnection = new MySQLConnection();
 	}
 
 	@Override
@@ -115,25 +122,63 @@ public class SQLOperation implements DataMapper {
 		}
 	}
 
+	/**
+	 * 获取部分plcNetInfo数据
+	 */
 	@Override
 	public List<PlcNetInfo> getPlcNetInfoData(String tablename, int from) {
-
-		try (SqlSession sqlSession = sqlSessionFactory_development.openSession();) {
-			DataMapper dataMapper = sqlSession.getMapper(DataMapper.class);
-			List<PlcNetInfo> plcnetinfos = dataMapper.getPlcNetInfoData(tablename, from);
-			logger.info("get id from " + from + " to " + (from + plcnetinfos.size()));
-			return plcnetinfos;
-		}
+		String sqlStatement = "SELECT Rule_id,Rule_name,Matching_level,Rule_action,Service_type,Keyword1,Keyword2,"
+				+ "Keyword3,Matching_word,Set_time,Validation_time,Manual_pause_time,Filter_method,Filter_argument FROM "
+				+ tablename + " WHERE id BETWEEN " + from + " AND " + (from + Constant.PAGE_SIZE);
+		return this.getPlcNetInfo(sqlStatement);
 	}
 
+	/**
+	 * 获取所有plcNetInfo数据
+	 */
 	@Override
 	public List<PlcNetInfo> getAllPlcNetInfo(String tablename) {
-		try (SqlSession sqlSession = sqlSessionFactory_development.openSession();) {
-			DataMapper dataMapper = sqlSession.getMapper(DataMapper.class);
-			List<PlcNetInfo> plcnetinfos = dataMapper.getAllPlcNetInfo(tablename);
-			logger.info("plcnetinfo size = " + plcnetinfos.size());
-			return plcnetinfos;
+		String sqlStatement = "select Rule_id,Rule_name,Matching_level,Rule_action,Service_type,Keyword1,Keyword2,"
+				+ "Keyword3,Matching_word,Set_time,Validation_time,Manual_pause_time,Filter_method,Filter_argument from "
+				+ tablename;
+		return this.getPlcNetInfo(sqlStatement);
+	}
+
+	/**
+	 * 根据查询条件获取plcNetInfo信息
+	 * @param sqlStatement
+	 * @return
+	 */
+	private List<PlcNetInfo> getPlcNetInfo(String sqlStatement) {
+		List<PlcNetInfo> plcNetInfos = new ArrayList<>();
+		try (Connection conn = mysqlConnection.getConnection();
+				Statement statement = conn.createStatement();
+				ResultSet resultSet = statement.executeQuery(sqlStatement);) {
+			if (resultSet != null) {
+				while (resultSet.next()) {
+					PlcNetInfo plcNetInfo = new PlcNetInfo();
+					plcNetInfo.setRule_id(resultSet.getBytes(1) == null ? "" : new String(resultSet.getBytes(1)));
+					plcNetInfo.setRule_name(resultSet.getBytes(2) == null ? "" : new String(resultSet.getBytes(2)));
+					plcNetInfo.setMatching_level(resultSet.getInt(3));
+					plcNetInfo.setRule_action(resultSet.getInt(4));
+					plcNetInfo.setService_type(resultSet.getInt(5));
+					plcNetInfo.setKeyword1(resultSet.getBytes(6) == null ? "" : new String(resultSet.getBytes(6)));
+					plcNetInfo.setKeyword2(resultSet.getBytes(7) == null ? "" : new String(resultSet.getBytes(7)));
+					plcNetInfo.setKeyword3(resultSet.getBytes(8) == null ? "" : new String(resultSet.getBytes(8)));
+					plcNetInfo.setMatching_word(resultSet.getInt(9));
+					plcNetInfo.setSet_time(resultSet.getLong(10));
+					plcNetInfo.setValidation_time(resultSet.getLong(11));
+					plcNetInfo.setManual_pause_time(resultSet.getLong(12));
+					plcNetInfo.setFilter_method(resultSet.getInt(13));
+					plcNetInfo.setFilter_argument(resultSet.getBytes(14) == null ? "" : new String(resultSet
+							.getBytes(14)));
+					plcNetInfos.add(plcNetInfo);
+				}
+			}
+		} catch (SQLException e) {
+			e.printStackTrace();
 		}
+		return plcNetInfos;
 	}
 
 	@Override
@@ -199,17 +244,16 @@ public class SQLOperation implements DataMapper {
 		}
 	}
 
-	public static void main(String[] args) {
+	public static void main(String[] args) throws IOException {
 		SQLOperation o = new SQLOperation();
-		List<GEO> geos = o.getALLGEO("countryinfo");
-		System.out.println(geos.get(0));
-		//		long service_code = o.getServiceCode("plcClient");
-		//		System.out.println(service_code);
+		List<PlcNetInfo> plcNetInfos = o.getPlcNetInfoData("plcnetinfo", 0);
+		System.out.println(plcNetInfos);
+		//		List<PlcNetInfo> plcNetInfos = o.getAllPlcNetInfo("plcnetinfo");
+		//		System.out.println(plcNetInfos);
 		//		if (o.existsServiceCode(Constant.adt_plcclient_table_name, service_code) == 0) {
 		//			o.insertServiceCode(Constant.adt_plcclient_table_name, service_code,
 		//					String.valueOf(System.currentTimeMillis()));
 		//		}
 
 	}
-
 }

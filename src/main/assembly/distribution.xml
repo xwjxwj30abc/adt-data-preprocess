@@ -16,6 +16,7 @@
 				<include>zookeeper.properties</include>
 				<include>17monipdb.dat</include>
 				<include>ipdb.properties</include>
+				<include>db.properties</include>
 				<include>shell.properties</include>
 				<include>web-server.properties</include>
 				<include>adt.sh</include>

@@ -96,6 +96,7 @@
 						<exclude>vpndisk_run.sh</exclude>
 						<exclude>clean.sh</exclude>
 						<exclude>transfer.sh</exclude>
+						<exclude>db.properties</exclude>
 					</excludes>
 				</configuration>
 			</plugin>
