@@ -10,7 +10,7 @@
 		<typeAlias type="zx.soft.adt.domain.AccessList" alias="AccessList" />
 		<typeAlias type="zx.soft.adt.domain.VPNTraffic" alias="VPNTraffic" />
 		<typeAlias type="zx.soft.adt.domain.HotPlugLog" alias="HotPlugLog" />
-		<typeAlias type="zx.soft.adt.domain.IP2GEO" alias="IP2GEO" />
+		<typeAlias type="zx.soft.adt.domain.GEO" alias="GEO" />
 	</typeAliases>
 	<environments default="adt">
 		<environment id="development">
@@ -18,9 +18,9 @@
 			<dataSource type="POOLED">
 				<property name="driver" value="com.mysql.jdbc.Driver" />
 				  <property name="url"
-					value="jdbc:mysql://127.0.0.1:28096/vpn" />
+					value="jdbc:mysql://192.168.6.126/vpn" />
 				<property name="username" value="root" />
-				<property name="password" value="" /> 
+				<property name="password" value="root" /> 
                                <property name="driver.encoding" value="latin1" />
 				<!-- <property name="url"
 					value="jdbc:mysql://192.168.6.126/vpn?useUnicode=true&amp;characterEncoding=utf-8" />

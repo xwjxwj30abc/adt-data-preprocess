@@ -24,9 +24,9 @@ public class RecoverEnvResource extends ServerResource {
 
 	@Get("json")
 	public String recoverEnv() {
+		int success = application.excuteShell(props.getProperty("mysql.cleanup.shell.path"));
 		Constant.SUM_OF_DATA = 0;
 		Constant.CURRENT_NUM = new AtomicLong(0L);
-		int success = application.excuteShell(props.getProperty("mysql.cleanup.shell.path"));
 		return String.valueOf(success);
 	}
 }
