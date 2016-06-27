@@ -10,6 +10,8 @@ import java.util.Properties;
 import org.apache.hadoop.hbase.MasterNotRunningException;
 import org.apache.hadoop.hbase.ZooKeeperConnectionException;
 import org.apache.hadoop.hbase.client.HConnection;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import zx.soft.adt.domain.PlcNetInfo;
 import zx.soft.adt.utils.Constant;
@@ -35,6 +37,7 @@ public class WriteToHBase {
 		IP.load(ipDatabase);
 	}
 	private SQLOperation sqlOperation;
+	private Logger logger = LoggerFactory.getLogger(WriteToHBase.class);
 
 	public WriteToHBase(SQLOperation sqlOperation) {
 		this.sqlOperation = sqlOperation;
@@ -58,13 +61,17 @@ public class WriteToHBase {
 
 	//创建或更新HBase中的表
 	private void initHBaseEnv() throws MasterNotRunningException, ZooKeeperConnectionException, IOException,
-	ServiceException {
+			ServiceException {
 		HBaseClient client = new HBaseClient();
 		if (client.isTableExists(Constant.adt_alertList_table_name)) {
+			logger.info("table " + Constant.adt_alertList_table_name + "exist");
 			client.deleteTable(Constant.adt_alertList_table_name);
+			logger.info("delete table " + Constant.adt_alertList_table_name);
 			client.createTable(Constant.adt_alertList_table_name, Constant.adt_cf);
+			logger.info("create table " + Constant.adt_alertList_table_name);
 		} else {
 			client.createTable(Constant.adt_alertList_table_name, Constant.adt_cf);
+			logger.info("create table " + Constant.adt_alertList_table_name);
 		}
 		if (client.isTableExists(Constant.adt_accesslist_table_name)) {
 			client.deleteTable(Constant.adt_accesslist_table_name);

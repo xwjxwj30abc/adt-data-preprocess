@@ -93,7 +93,7 @@ public class ImportDataThread implements Runnable {
 			HBaseTable hbaseTable = new HBaseTable(conn, Constant.adt_alertList_table_name);
 			GEO geo = null;
 			for (AlertList alertlist : alertlists) {
-				String keyWord = CheckSumUtils.getMD5(String.valueOf(System.currentTimeMillis())
+				String keyWord = CheckSumUtils.getMD5(alertlist.getMatching_time()
 						+ String.valueOf(Constant.Service_code) + String.valueOf(alertlist.getId()));
 				try {
 					if (alertlist.getDestination_ip() != 0) {
@@ -148,8 +148,8 @@ public class ImportDataThread implements Runnable {
 			HBaseTable hbaseTable = new HBaseTable(conn, Constant.adt_accesslist_table_name);
 			GEO geo = null;
 			for (AccessList accesslist : accesslists) {
-				String keyWord = CheckSumUtils.getMD5(String.valueOf(System.currentTimeMillis()) + mysqlTablename
-						+ String.valueOf(accesslist.getId()));
+				String keyWord = CheckSumUtils.getMD5(String.valueOf(Constant.Service_code)
+						+ String.valueOf(accesslist.getId()) + String.valueOf(accesslist.getTime()));
 				try {
 					if (accesslist.getDestination_ip() != 0) {
 						geo = IPToGEO.get(accesslist.getDestination_ip(), this.sqlOperation);
