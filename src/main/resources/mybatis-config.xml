@@ -38,9 +38,9 @@
 				<!-- <property name="url" value="jdbc:mysql://192.168.3.66/adt?useUnicode=true&amp;characterEncoding=utf-8" 
 					/> -->
 				<property name="url"
-					value="jdbc:mysql://192.168.3.55/adt?useUnicode=true&amp;characterEncoding=utf-8" />
-				<property name="username" value="adt" />
-				<property name="password" value="adt" />
+					value="jdbc:mysql://192.168.4.214/adt?useUnicode=true&amp;characterEncoding=utf-8" />
+				<property name="username" value="root" />
+				<property name="password" value="root" />
 				<property name="driver.encoding" value="UTF8" />
 			</dataSource>
 		</environment>

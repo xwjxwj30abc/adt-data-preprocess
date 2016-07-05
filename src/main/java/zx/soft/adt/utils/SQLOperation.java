@@ -247,8 +247,8 @@ public class SQLOperation implements DataMapper {
 
 	public static void main(String[] args) throws IOException {
 		SQLOperation o = new SQLOperation();
-		List<PlcNetInfo> plcNetInfos = o.getPlcNetInfoData("plcnetinfo", 0);
-		System.out.println(plcNetInfos);
+		long Service_code_tmp = o.getServiceCode(Constant.adt_plcclient_table_name);
+		System.out.println(Service_code_tmp);
 		//		List<PlcNetInfo> plcNetInfos = o.getAllPlcNetInfo("plcnetinfo");
 		//		System.out.println(plcNetInfos);
 		//		if (o.existsServiceCode(Constant.adt_plcclient_table_name, service_code) == 0) {

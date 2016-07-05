@@ -45,11 +45,10 @@ public class MybatisConfig {
 	public SqlSessionFactory getAdtSqlSessionFactory() {
 		SqlSessionFactory sqlSessionFactory = null;
 		try (InputStream inputStream = Resources.getResourceAsStream(CONFIGURATION_PATH);) {
-			sqlSessionFactory = new SqlSessionFactoryBuilder().build(inputStream,
-					DataSourceEnvironment.development.name());
-			logger.info("update {} SqlSessionFactory successfully.", DataSourceEnvironment.development.name());
+			sqlSessionFactory = new SqlSessionFactoryBuilder().build(inputStream, DataSourceEnvironment.adt.name());
+			logger.info("update {} SqlSessionFactory successfully.", DataSourceEnvironment.adt.name());
 		} catch (IOException e) {
-			logger.warn("update {} SqlSessionFactory error.", DataSourceEnvironment.development.name());
+			logger.warn("update {} SqlSessionFactory error.", DataSourceEnvironment.adt.name());
 			logger.error(e.getMessage(), e);
 		}
 		return sqlSessionFactory;
@@ -58,10 +57,11 @@ public class MybatisConfig {
 	public SqlSessionFactory getDevelopmentSqlSessionFactory() {
 		SqlSessionFactory sqlSessionFactory = null;
 		try (InputStream inputStream = Resources.getResourceAsStream(CONFIGURATION_PATH);) {
-			sqlSessionFactory = new SqlSessionFactoryBuilder().build(inputStream, DataSourceEnvironment.adt.name());
-			logger.info("update {} SqlSessionFactory successfully.", DataSourceEnvironment.adt.name());
+			sqlSessionFactory = new SqlSessionFactoryBuilder().build(inputStream,
+					DataSourceEnvironment.development.name());
+			logger.info("update {} SqlSessionFactory successfully.", DataSourceEnvironment.development.name());
 		} catch (IOException e) {
-			logger.warn("update {} SqlSessionFactory error.", DataSourceEnvironment.adt.name());
+			logger.warn("update {} SqlSessionFactory error.", DataSourceEnvironment.development.name());
 			logger.error(e.getMessage(), e);
 		}
 		return sqlSessionFactory;
