@@ -37,8 +37,9 @@ public class SQLOperation implements DataMapper {
 	private MySQLConnection mysqlConnection;
 
 	public SQLOperation() {
-		sqlSessionFactory_adt = MybatisConfig.getAdtSqlSessionFactory();
-		sqlSessionFactory_development = new MybatisConfig().getDevelopmentSqlSessionFactory();
+		MybatisConfig mybatisConfig = new MybatisConfig();
+		sqlSessionFactory_adt = mybatisConfig.getAdtSqlSessionFactory();
+		sqlSessionFactory_development = mybatisConfig.getDevelopmentSqlSessionFactory();
 		mysqlConnection = new MySQLConnection();
 	}
 

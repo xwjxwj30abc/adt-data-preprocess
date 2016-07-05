@@ -20,28 +20,29 @@ public class MybatisConfig {
 	private static Logger logger = LoggerFactory.getLogger(MybatisConfig.class);
 
 	private static final String CONFIGURATION_PATH = "mybatis-config.xml";
-	private static SqlSessionFactory adt;
+
+	//private static SqlSessionFactory adt;
 
 	static enum DataSourceEnvironment {
 		development, adt;
 	}
 
-	public static SqlSessionFactory getAdtSqlSessionFactory() {
-		if (adt != null) {
-			return adt;
-		} else {
-			try (InputStream inputStream = Resources.getResourceAsStream(CONFIGURATION_PATH);) {
-				adt = new SqlSessionFactoryBuilder().build(inputStream, DataSourceEnvironment.adt.name());
-				logger.info("Get {} SqlSessionFactory successfully.", DataSourceEnvironment.adt.name());
-			} catch (IOException e) {
-				logger.warn("Get {} SqlSessionFactory error.", DataSourceEnvironment.adt.name());
-				logger.error(e.getMessage(), e);
-			}
-			return adt;
-		}
-	}
+	//	public static SqlSessionFactory getAdtSqlSessionFactory() {
+	//		if (adt != null) {
+	//			return adt;
+	//		} else {
+	//			try (InputStream inputStream = Resources.getResourceAsStream(CONFIGURATION_PATH);) {
+	//				adt = new SqlSessionFactoryBuilder().build(inputStream, DataSourceEnvironment.adt.name());
+	//				logger.info("Get {} SqlSessionFactory successfully.", DataSourceEnvironment.adt.name());
+	//			} catch (IOException e) {
+	//				logger.warn("Get {} SqlSessionFactory error.", DataSourceEnvironment.adt.name());
+	//				logger.error(e.getMessage(), e);
+	//			}
+	//			return adt;
+	//		}
+	//	}
 
-	public SqlSessionFactory getDevelopmentSqlSessionFactory() {
+	public SqlSessionFactory getAdtSqlSessionFactory() {
 		SqlSessionFactory sqlSessionFactory = null;
 		try (InputStream inputStream = Resources.getResourceAsStream(CONFIGURATION_PATH);) {
 			sqlSessionFactory = new SqlSessionFactoryBuilder().build(inputStream,
@@ -49,6 +50,18 @@ public class MybatisConfig {
 			logger.info("update {} SqlSessionFactory successfully.", DataSourceEnvironment.development.name());
 		} catch (IOException e) {
 			logger.warn("update {} SqlSessionFactory error.", DataSourceEnvironment.development.name());
+			logger.error(e.getMessage(), e);
+		}
+		return sqlSessionFactory;
+	}
+
+	public SqlSessionFactory getDevelopmentSqlSessionFactory() {
+		SqlSessionFactory sqlSessionFactory = null;
+		try (InputStream inputStream = Resources.getResourceAsStream(CONFIGURATION_PATH);) {
+			sqlSessionFactory = new SqlSessionFactoryBuilder().build(inputStream, DataSourceEnvironment.adt.name());
+			logger.info("update {} SqlSessionFactory successfully.", DataSourceEnvironment.adt.name());
+		} catch (IOException e) {
+			logger.warn("update {} SqlSessionFactory error.", DataSourceEnvironment.adt.name());
 			logger.error(e.getMessage(), e);
 		}
 		return sqlSessionFactory;
