@@ -10,7 +10,7 @@
 		<typeAlias type="zx.soft.adt.domain.AccessList" alias="AccessList" />
 		<typeAlias type="zx.soft.adt.domain.VPNTraffic" alias="VPNTraffic" />
 		<typeAlias type="zx.soft.adt.domain.HotPlugLog" alias="HotPlugLog" />
-		<typeAlias type="zx.soft.adt.domain.IP2GEO" alias="IP2GEO" />
+		<typeAlias type="zx.soft.adt.domain.GEO" alias="GEO" />
 	</typeAliases>
 	<environments default="adt">
 		<environment id="development">

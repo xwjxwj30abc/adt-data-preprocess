@@ -14,4 +14,10 @@ exit;
 exit
 exit
 eof
+
+#delete mysql data
+echo "start delete mysql table"
+mysql -uroot -p" " -h127.0.0.1 -P28096 -e "use vpn;delete from AccessList;delete from AlertList;delete from hot_plug_log;delete from vpn_traffic;delete from vpn_wlan_ip;show tables;"
+echo "clean mysql table finished"
+
 exit 0
